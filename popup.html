@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=420, initial-scale=1.0">
+    <title>Tenten DNS Automation</title>
+    <link rel="stylesheet" href="popup.css">
+    <link rel="stylesheet" href="popup-fix.css">
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <!-- Left Panel - Main Controls -->
+            <div class="left-panel">
+                <div class="header">
+                    <img src="icons/icon48.png" alt="Logo" class="logo">
+                    <h1>Runsystem DNS Manager</h1>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Techsupport Tool</div>
+                </div>
+                
+                <div class="status" id="status">
+                    <div class="status-indicator offline" id="statusIndicator"></div>
+                    <span id="statusText">Chưa kết nối</span>
+                </div>
+
+                <div class="input-section">
+                    <label for="domainInput">Tên miền:</label>
+                    <input type="text" id="domainInput" placeholder="example.com" class="domain-input">
+                </div>
+
+                <div class="menu-section">
+                    <h3>Chức năng DNS</h3>
+                    
+                    <!-- DNS Automation -->
+                    <div class="menu-item disabled" id="dnsAutomation">
+                        <div class="menu-item-content">
+                            <i class="icon">🔧</i>
+                            <div class="menu-text">
+                                <div class="menu-title">DNS Automation Ladipage</div>
+                                <div class="menu-desc">Tự động tạo CNAME + REDIRECT để trỏ về Ladipage</div>
+                            </div>
+                            <div class="menu-status needs-tenten">TENTEN</div>
+                        </div>
+                    </div>
+
+                    <!-- WHOIS Lookup -->
+                    <div class="menu-item" id="whoisLookup">
+                        <div class="menu-item-content">
+                            <i class="icon">🔍</i>
+                            <div class="menu-text">
+                                <div class="menu-title">WHOIS Lookup</div>
+                                <div class="menu-desc">Tra cứu thông tin đăng ký tên miền</div>
+                            </div>
+                            <div class="menu-status ready">READY</div>
+                        </div>
+                    </div>
+
+                    <!-- IP/Domain Info -->
+                    <div class="menu-item" id="ipInfo">
+                        <div class="menu-item-content">
+                            <i class="icon">🌍</i>
+                            <div class="menu-text">
+                                <div class="menu-title">IP/Domain Info</div>
+                                <div class="menu-desc">Tra cứu thông tin địa lý IP và domain</div>
+                            </div>
+                            <div class="menu-status ready">READY</div>
+                        </div>
+                    </div>
+
+                    <!-- DNS Records -->
+                    <div class="menu-item" id="dnsRecords">
+                        <div class="menu-item-content">
+                            <i class="icon">📋</i>
+                            <div class="menu-text">
+                                <div class="menu-title">DNS Records</div>
+                                <div class="menu-desc">Tra cứu bản ghi DNS (A, AAAA, CNAME, MX, etc.)</div>
+                            </div>
+                            <div class="menu-status ready">READY</div>
+                        </div>
+                    </div>
+
+                    <!-- Webhook Records (Coming Soon) -->
+                    <div class="menu-item disabled" id="webhookRecords">
+                        <div class="menu-item-content">
+                            <i class="icon">🔗</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Webhook Records</div>
+                                <div class="menu-desc">Quản lý webhook DNS</div>
+                            </div>
+                            <div class="menu-status coming-soon">SOON</div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Records (Coming Soon) -->
+                    <div class="menu-item disabled" id="customRecords">
+                        <div class="menu-item-content">
+                            <i class="icon">⚙️</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Custom Records</div>
+                                <div class="menu-desc">Tạo bản ghi tùy chỉnh</div>
+                            </div>
+                            <div class="menu-status coming-soon">SOON</div>
+                        </div>
+                    </div>
+
+                    <!-- Batch Operations (Coming Soon) -->
+                    <div class="menu-item disabled" id="batchOps">
+                        <div class="menu-item-content">
+                            <i class="icon">📋</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Batch Operations</div>
+                                <div class="menu-desc">Xử lý hàng loạt</div>
+                            </div>
+                            <div class="menu-status coming-soon">SOON</div>
+                        </div>
+                    </div>
+
+                    <!-- Test items to force scrolling -->
+                    <div class="menu-item disabled" id="test1">
+                        <div class="menu-item-content">
+                            <i class="icon">🧪</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Test Feature 1</div>
+                                <div class="menu-desc">Test scroll functionality</div>
+                            </div>
+                            <div class="menu-status coming-soon">TEST</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item disabled" id="test2">
+                        <div class="menu-item-content">
+                            <i class="icon">🔧</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Test Feature 2</div>
+                                <div class="menu-desc">Another test item for scrolling</div>
+                            </div>
+                            <div class="menu-status coming-soon">TEST</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item disabled" id="test3">
+                        <div class="menu-item-content">
+                            <i class="icon">⚡</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Test Feature 3</div>
+                                <div class="menu-desc">Third test item to ensure scroll works</div>
+                            </div>
+                            <div class="menu-status coming-soon">TEST</div>
+                        </div>
+                    </div>
+
+                    <div class="menu-item disabled" id="test4">
+                        <div class="menu-item-content">
+                            <i class="icon">🚀</i>
+                            <div class="menu-text">
+                                <div class="menu-title">Test Feature 4</div>
+                                <div class="menu-desc">Fourth test item for complete scroll test</div>
+                            </div>
+                            <div class="menu-status coming-soon">TEST</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-section" id="progressSection" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Đang xử lý...</div>
+                    <div class="progress-controls" style="text-align: center; margin-top: 10px;">
+                        <button id="stopButton" class="stop-button" onclick="stopAutomation()">⛔ Dừng</button>
+                    </div>
+                </div>
+
+                <div class="log-section" id="logSection" style="display: none;">
+                    <h3>Log thực thi</h3>
+                    <div class="log-container" id="logContainer"></div>
+                </div>
+
+                <div class="footer">
+                    <div class="version">v1.6.0 - Runsystem</div>
+                    <div class="help">
+                        <a href="#" id="helpLink">Hướng dẫn</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Results Display -->
+            <div class="right-panel" id="rightPanel">
+                <div class="right-panel-header">
+                    <h3 class="right-panel-title" id="rightPanelTitle">Kết quả</h3>
+                    <button class="close-panel-btn" id="closePanelBtn">×</button>
+                </div>
+                <div class="right-panel-content" id="rightPanelContent">
+                    <!-- WHOIS Results -->
+                    <div class="whois-section" id="whoisSection" style="display: none;">
+                        <div class="whois-container" id="whoisContainer"></div>
+                    </div>
+
+                    <!-- IP Info Results -->
+                    <div class="ipinfo-section" id="ipInfoSection" style="display: none;">
+                        <div class="ipinfo-container" id="ipInfoContainer"></div>
+                    </div>
+
+                    <!-- DNS Records Results -->
+                    <div class="dns-section" id="dnsSection" style="display: none;">
+                        <div class="dns-controls">
+                            <label for="recordType">Loại bản ghi:</label>
+                            <select id="recordType" class="record-type-select">
+                                <option value="A" title="Host address (dotted quad)">A</option>
+                                <option value="AAAA" title="IP v6 address (address spec with colons)">AAAA</option>
+                                <option value="CNAME" title="Canonical name for an alias (domain name)">CNAME</option>
+                                <option value="MX" title="Mail exchanger (preference value, domain name)">MX</option>
+                                <option value="NS" title="Authoritative nameserver (domain name)">NS</option>
+                                <option value="PTR" title="Domain name pointer (domain name)">PTR</option>
+                                <option value="SRV" title="Service record">SRV</option>
+                                <option value="SOA" title="Start of Authority">SOA</option>
+                                <option value="TXT" title="Descriptive text (one or more strings)">TXT</option>
+                                <option value="CAA" title="Certification Authority Authorization">CAA</option>
+                                <option value="DS" title="Delegation Signer">DS</option>
+                                <option value="DNSKEY" title="ZSK / KSK Public Keys">DNSKEY</option>
+                            </select>
+                            <button id="lookupDnsBtn" class="lookup-dns-btn">🔍 Tra cứu</button>
+                        </div>
+                        <div class="dns-container" id="dnsContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load modular JavaScript files -->
+    <script src="js/domain-utils.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <script src="js/whois-handler.js"></script>
+    <script src="js/ipinfo-handler.js"></script>
+    <script src="js/dns-records-handler.js"></script>
+    <script src="js/popup-main.js"></script>
+</body>
+</html>

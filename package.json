@@ -1,0 +1,35 @@
+{
+  "name": "runsystem-tenten-dns-automation",
+  "version": "1.6.4",
+  "description": "Extension for Runsystem's Techsupport - DNS Automation + WHOIS Lookup + IP/Domain Info + DNS Records Checker",
+  "author": "Runsystem Techsupport Team",
+  "license": "MIT",
+  "keywords": [
+    "chrome-extension",
+    "dns",
+    "automation",
+    "tenten",
+    "ladipage",
+    "runsystem",
+    "techsupport",
+    "whois",
+    "domain-lookup",
+    "ip-info",
+    "dns-records",
+    "modular-architecture"
+  ],
+  "scripts": {
+    "build": "echo 'Extension ready for loading'",
+    "dev": "echo 'Load extension in Chrome Developer Mode'",
+    "package": "echo 'Ready to package for Chrome Web Store'"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/runsystem/tenten-dns-automation"
+  },
+  "bugs": {
+    "url": "https://github.com/runsystem/tenten-dns-automation/issues"
+  },
+  "homepage": "https://github.com/runsystem/tenten-dns-automation#readme"
+}

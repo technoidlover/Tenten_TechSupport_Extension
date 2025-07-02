@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Extension - Version 1.6.2</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { padding: 10px 15px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Extension Debug Test - Version 1.6.2</h1>
+    
+    <div class="debug-section">
+        <h3>📋 Changes Made in v1.6.2:</h3>
+        <ul>
+            <li class="success">✅ Fast Enable: Chỉ cần URL chứa domain.tenten.vn</li>
+            <li class="success">✅ No Title Check: Bỏ check title để tránh chậm</li>
+            <li class="success">✅ Auto F5: Tự động refresh sau 3 giây</li>
+            <li class="success">✅ Ladipage Branding: Clear messaging</li>
+        </ul>
+    </div>
+
+    <div class="debug-section">
+        <h3>🧪 Test Instructions:</h3>
+        <ol>
+            <li><strong>Reload Extension:</strong> chrome://extensions/ → Click reload button</li>
+            <li><strong>Open Domain Page:</strong> Go to any domain.tenten.vn page</li>
+            <li><strong>Check Button:</strong> Extension button should turn green instantly</li>
+            <li><strong>Test Automation:</strong> Enter domain and click "DNS Automation Ladipage"</li>
+            <li><strong>Watch Logs:</strong> Should see "DNS Automation Ladipage" messages</li>
+            <li><strong>Wait for F5:</strong> Auto refresh after 3-second countdown</li>
+        </ol>
+    </div>
+
+    <div class="debug-section">
+        <h3>🔍 Debug Console Commands:</h3>
+        <button onclick="checkExtension()">Check Extension Status</button>
+        <button onclick="testVersion()">Test Version</button>
+        <button onclick="simulateTentenPage()">Simulate Tenten Page</button>
+        
+        <div id="debugOutput" style="margin-top: 10px; padding: 10px; background: #f5f5f5;"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('debugOutput');
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            output.innerHTML += `<div class="${className}">[${new Date().toLocaleTimeString()}] ${message}</div>`;
+        }
+
+        function checkExtension() {
+            log('Checking extension status...', 'info');
+            
+            // Check if extension is loaded
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                log('✅ Chrome runtime available', 'success');
+                log(`Extension ID: ${chrome.runtime.id}`, 'info');
+            } else {
+                log('❌ Chrome runtime not available', 'error');
+            }
+        }
+
+        function testVersion() {
+            log('Testing version 1.6.2 features...', 'info');
+            log('Expected changes:', 'info');
+            log('- Fast Enable (URL-only check)', 'info');
+            log('- Auto F5 after automation', 'info');
+            log('- Ladipage branding in logs', 'info');
+        }
+
+        function simulateTentenPage() {
+            log('Simulating Tenten page detection...', 'info');
+            const currentUrl = window.location.href;
+            
+            if (currentUrl.includes('domain.tenten.vn')) {
+                log('✅ Already on domain.tenten.vn - Extension should be green!', 'success');
+            } else {
+                log('ℹ️ Not on domain.tenten.vn - Open domain.tenten.vn to test', 'info');
+                log('Expected behavior: Button turns green instantly when on domain.tenten.vn', 'info');
+            }
+        }
+
+        // Auto-run initial check
+        window.onload = function() {
+            log('🚀 Debug page loaded for Extension v1.6.2', 'success');
+            checkExtension();
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Date Formatting</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; background: #f5f5f5; }
+        .result { font-weight: bold; color: #006600; }
+        .error { color: #cc0000; }
+    </style>
+</head>
+<body>
+    <h1>Test Date Formatting Function</h1>
+    
+    <div id="results"></div>
+
+    <script>
+        function formatDate(dateString) {
+            if (!dateString || dateString === 'N/A') return 'N/A';
+            
+            try {
+                // Handle DD/MM/YYYY format from Tenten
+                if (dateString.includes('/')) {
+                    const parts = dateString.split('/');
+                    if (parts.length === 3) {
+                        // Check if it's DD/MM/YYYY format (day first)
+                        const day = parseInt(parts[0]);
+                        const month = parseInt(parts[1]);
+                        const year = parseInt(parts[2]);
+                        
+                        // Validate ranges
+                        if (day >= 1 && day <= 31 && month >= 1 && month <= 12 && year >= 1900) {
+                            // Create date in YYYY-MM-DD format for proper parsing
+                            const isoDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                            const date = new Date(isoDate);
+                            
+                            // Verify the date is valid
+                            if (!isNaN(date.getTime())) {
+                                return date.toLocaleDateString('vi-VN', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit'
+                                });
+                            }
+                        }
+                    }
+                }
+                
+                // Try parsing as-is for other formats
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                    return date.toLocaleDateString('vi-VN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+                }
+                
+                // If parsing fails, return original string
+                return dateString;
+            } catch (error) {
+                console.log('Date formatting error:', error, 'for date:', dateString);
+                return dateString;
+            }
+        }
+
+        // Test cases
+        const testDates = [
+            '16/01/2025',
+            '16/01/2026', 
+            '01/12/2024',
+            '31/12/2023',
+            '2025-01-16',
+            'invalid-date',
+            '',
+            null,
+            'N/A'
+        ];
+
+        const resultsDiv = document.getElementById('results');
+        
+        testDates.forEach(testDate => {
+            const result = formatDate(testDate);
+            const div = document.createElement('div');
+            div.className = 'test';
+            div.innerHTML = `
+                <strong>Input:</strong> "${testDate}" <br>
+                <span class="result">Output:</span> "${result}"
+            `;
+            resultsDiv.appendChild(div);
+        });
+
+        // Test the specific dates from Tenten response
+        console.log('Test Tenten dates:');
+        console.log('16/01/2025 →', formatDate('16/01/2025'));
+        console.log('16/01/2026 →', formatDate('16/01/2026'));
+    </script>
+</body>
+</html>

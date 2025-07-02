@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tenten WHOIS API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007cba;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .loading {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Test Tenten WHOIS API</h1>
+        <p>Test API Tenten để kiểm tra chức năng WHOIS lookup</p>
+        
+        <div>
+            <input type="text" id="domainInput" placeholder="Nhập tên miền (ví dụ: google.com)" value="google.com">
+            <button id="testBtn" onclick="testTentenAPI()">Test API</button>
+        </div>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        let isLoading = false;
+
+        async function testTentenAPI() {
+            if (isLoading) return;
+            
+            const domain = document.getElementById('domainInput').value.trim();
+            if (!domain) {
+                showResult('Vui lòng nhập tên miền', 'error');
+                return;
+            }
+
+            isLoading = true;
+            const btn = document.getElementById('testBtn');
+            btn.disabled = true;
+            btn.textContent = 'Đang test...';
+            
+            showResult('Đang test API Tenten...', 'loading');
+
+            try {
+                // Step 1: Get CSRF token from homepage
+                showResult('Bước 1: Lấy CSRF token từ trang chủ Tenten...', 'loading');
+                
+                const homepageResponse = await fetch('https://whois.tenten.vn/', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9,vi;q=0.8',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+                        'Sec-Ch-Ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+                        'Sec-Ch-Ua-Mobile': '?0',
+                        'Sec-Ch-Ua-Platform': '"Windows"',
+                        'Sec-Fetch-Dest': 'document',
+                        'Sec-Fetch-Mode': 'navigate',
+                        'Sec-Fetch-Site': 'none',
+                        'Sec-Fetch-User': '?1',
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
+                    }
+                });
+
+                if (!homepageResponse.ok) {
+                    throw new Error(`Homepage request failed: ${homepageResponse.status}`);
+                }
+
+                // Extract all cookies 
+                const allCookies = [];
+                const setCookieHeader = homepageResponse.headers.get('set-cookie');
+                if (setCookieHeader) {
+                    const cookiePairs = setCookieHeader.split(',').map(cookie => {
+                        const cookiePart = cookie.split(';')[0].trim();
+                        return cookiePart;
+                    }).filter(cookie => cookie.includes('='));
+                    
+                    allCookies.push(...cookiePairs);
+                }
+
+                // Extract CSRF token with multiple patterns
+                const htmlText = await homepageResponse.text();
+                let csrfToken = '';
+                
+                const patterns = [
+                    /<meta\s+name=["']csrf-token["']\s+content=["']([^"']+)["']/i,
+                    /<meta\s+content=["']([^"']+)["']\s+name=["']csrf-token["']/i,
+                    /window\.Laravel\s*=\s*\{[^}]*csrf_token['"]\s*:\s*['"]([^'"]+)['"]/i,
+                    /_token['"]\s*[:=]\s*['"]([^'"]+)['"]/i,
+                    /csrf[_-]?token['"]\s*[:=]\s*['"]([^'"]+)['"]/i
+                ];
+                
+                for (const pattern of patterns) {
+                    const match = htmlText.match(pattern);
+                    if (match && match[1]) {
+                        csrfToken = match[1];
+                        break;
+                    }
+                }
+
+                showResult(`Bước 1 hoàn thành:
+- CSRF Token: ${csrfToken ? 'Found (' + csrfToken.substring(0, 20) + '...)' : 'Not found'}
+- Cookies: ${allCookies.length} cookie(s) extracted
+- Cookies: ${allCookies.join('; ')}
+
+Bước 2: Gửi request WHOIS với domain: ${domain}...`, 'info');
+
+                // Step 2: Make WHOIS request with improved headers
+                const whoisHeaders = {
+                    'Accept': 'text/html, */*; q=0.01',
+                    'Accept-Encoding': 'gzip, deflate, br, zstd',
+                    'Accept-Language': 'en-US,en;q=0.9,vi;q=0.8',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'Origin': 'https://whois.tenten.vn',
+                    'Referer': 'https://whois.tenten.vn/',
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Sec-Ch-Ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+                    'Sec-Ch-Ua-Mobile': '?0',
+                    'Sec-Ch-Ua-Platform': '"Windows"',
+                    'Sec-Fetch-Dest': 'empty',
+                    'Sec-Fetch-Mode': 'cors',
+                    'Sec-Fetch-Site': 'same-origin'
+                };
+
+                // Add CSRF token with both header names
+                if (csrfToken) {
+                    whoisHeaders['X-CSRF-TOKEN'] = csrfToken;
+                    whoisHeaders['X-Csrf-Token'] = csrfToken;
+                }
+                
+                // Add all cookies
+                if (allCookies.length > 0) {
+                    whoisHeaders['Cookie'] = allCookies.join('; ');
+                }
+
+                const tentenResponse = await fetch('https://whois.tenten.vn/home/check-domain', {
+                    method: 'POST',
+                    headers: whoisHeaders,
+                    body: `domain=${encodeURIComponent(domain)}`
+                });
+
+                const responseStatus = tentenResponse.status;
+                const contentType = tentenResponse.headers.get('content-type') || '';
+                
+                if (tentenResponse.ok) {
+                    const responseText = await tentenResponse.text();
+                    
+                    let resultText = `✅ API Test thành công!
+
+Response Status: ${responseStatus}
+Content-Type: ${contentType}
+Response Length: ${responseText.length} characters
+
+`;
+
+                    // Try parse as JSON
+                    try {
+                        const jsonData = JSON.parse(responseText);
+                        resultText += `📊 JSON Response:
+${JSON.stringify(jsonData, null, 2)}`;
+                        showResult(resultText, 'success');
+                    } catch (jsonError) {
+                        resultText += `📄 HTML Response (first 1000 chars):
+${responseText.substring(0, 1000)}${responseText.length > 1000 ? '...' : ''}`;
+                        showResult(resultText, 'success');
+                    }
+                } else {
+                    const errorText = await tentenResponse.text();
+                    let errorMsg = `❌ API Test thất bại!
+
+Response Status: ${responseStatus}
+Content-Type: ${contentType}
+Error Response: ${errorText.substring(0, 500)}
+
+`;
+                    
+                    if (responseStatus === 419) {
+                        errorMsg += `🔧 Lỗi 419 - CSRF Token Issue:
+- Có thể CSRF token extraction không đúng
+- Hoặc API đã thay đổi cách xác thực
+- Kiểm tra lại HTML structure để extract token`;
+                    }
+                    
+                    throw new Error(errorMsg);
+                }
+
+            } catch (error) {
+                showResult(`❌ API Test thất bại:
+
+Error: ${error.message}
+
+Chi tiết debug:
+- Kiểm tra Network tab trong DevTools
+- Xem request headers và response
+- So sánh với working request từ browser
+- Có thể cần update CSRF token extraction logic`, 'error');
+            } finally {
+                isLoading = false;
+                btn.disabled = false;
+                btn.textContent = 'Test API';
+            }
+        }
+
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.style.display = 'block';
+            result.textContent = message;
+            result.className = `result ${type}`;
+        }
+
+        // Allow Enter key to trigger test
+        document.getElementById('domainInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testTentenAPI();
+            }
+        });
+    </script>
+</body>
+</html>

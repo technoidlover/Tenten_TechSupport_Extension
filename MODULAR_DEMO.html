@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modular Architecture Demo - Tenten Extension v1.6.0</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: Arial, sans-serif; 
+            background: #f0f0f0;
+        }
+        .demo-container {
+            border: 3px solid #2196f3;
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .demo-title {
+            background: #2196f3;
+            color: white;
+            padding: 10px 20px;
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .demo-description {
+            padding: 15px 20px;
+            background: #e3f2fd;
+            border-bottom: 1px solid #bbdefb;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .file-structure {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .file-structure .folder {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .file-structure .file {
+            color: #90cdf4;
+        }
+        
+        .file-structure .comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        .benefit-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .benefit-card h4 {
+            color: #2196f3;
+            margin-top: 0;
+        }
+        
+        .code-example {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+        
+        .migration-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .migration-note h4 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        .new-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .module-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .module-header {
+            background: #2196f3;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+        }
+        
+        .module-content {
+            padding: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>📋 Modular Architecture Demo - Tenten Extension v1.6.0 <span class="new-badge">REFACTORED</span></h1>
+    <p><strong>Cấu trúc mới:</strong> Extension đã được refactor thành modular architecture với scrolldown menu và file tách riêng!</p>
+
+    <div class="demo-container">
+        <h2 class="demo-title">🗂️ Cấu trúc File Mới</h2>
+        <div class="demo-description">
+            <strong>Tách từ 1 file lớn thành 6 modules nhỏ:</strong>
+        </div>
+        <div class="file-structure">
+js/<br>
+├── <span class="file">popup-main.js</span>          <span class="comment"># Main entry point, coordination</span><br>
+├── <span class="file">ui-manager.js</span>          <span class="comment"># UI/Layout management, notifications</span><br>
+├── <span class="file">whois-handler.js</span>       <span class="comment"># WHOIS functionality</span><br>
+├── <span class="file">ipinfo-handler.js</span>      <span class="comment"># IP/Domain Info functionality</span><br>
+├── <span class="file">dns-records-handler.js</span> <span class="comment"># DNS Records functionality</span><br>
+└── <span class="file">domain-utils.js</span>        <span class="comment"># Common utilities, validation</span><br>
+<br>
+<span class="comment"># Backup của file cũ</span><br>
+<span class="file">popup-old-backup.js</span>        <span class="comment"># Original file backup</span>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2 class="demo-title">🎯 Module Chi tiết</h2>
+        <div style="padding: 20px;">
+            <div class="module-card">
+                <div class="module-header">📋 popup-main.js - Main Coordinator</div>
+                <div class="module-content">
+                    <ul class="feature-list">
+                        <li>DOM element gathering</li>
+                        <li>Module initialization</li>
+                        <li>Event listener setup</li>
+                        <li>Tenten DNS Automation</li>
+                        <li>Message handling</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">🎨 ui-manager.js - UI Controller</div>
+                <div class="module-content">
+                    <ul class="feature-list">
+                        <li>Right panel management</li>
+                        <li>Notification system</li>
+                        <li>Progress bar & logs</li>
+                        <li>Status indicators</li>
+                        <li>Scroll handling</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">🔍 whois-handler.js - WHOIS Module</div>
+                <div class="module-content">
+                    <ul class="feature-list">
+                        <li>WHOIS lookup logic</li>
+                        <li>Tenten API integration</li>
+                        <li>Data formatting</li>
+                        <li>Loading states</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">🌍 ipinfo-handler.js - IP Info Module</div>
+                <div class="module-content">
+                    <ul class="feature-list">
+                        <li>IP/Domain geo lookup</li>
+                        <li>check-host.net API</li>
+                        <li>Geographic data display</li>
+                        <li>Interactive features</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">📋 dns-records-handler.js - DNS Module</div>
+                <div class="module-content">
+                    <ul class="feature-list">
+                        <li>DNS Records lookup</li>
+                        <li>Google DNS API</li>
+                        <li>12 record types support</li>
+                        <li>Smart formatting</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-header">🔧 domain-utils.js - Utilities</div>
+                <div class="module-content">
+                    <ul class="feature-list">
+                        <li>Domain validation</li>
+                        <li>Storage functions</li>
+                        <li>Date formatting</li>
+                        <li>Debounce/throttle</li>
+                        <li>Batch processing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2 class="demo-title">🚀 Benefits của Modular Architecture</h2>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <h4>🛠️ Maintainability</h4>
+                <p>Mỗi chức năng trong file riêng, dễ maintain và debug</p>
+            </div>
+            <div class="benefit-card">
+                <h4>📈 Scalability</h4>
+                <p>Dễ thêm chức năng mới mà không ảnh hưởng code cũ</p>
+            </div>
+            <div class="benefit-card">
+                <h4>🔍 Debugging</h4>
+                <p>Debug từng module riêng biệt, isolate issues</p>
+            </div>
+            <div class="benefit-card">
+                <h4>♻️ Code Reuse</h4>
+                <p>Utilities có thể reuse across modules</p>
+            </div>
+            <div class="benefit-card">
+                <h4>👥 Team Development</h4>
+                <p>Multiple developers làm parallel trên modules khác nhau</p>
+            </div>
+            <div class="benefit-card">
+                <h4>📊 Organization</h4>
+                <p>Code structure rõ ràng, easy to navigate</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2 class="demo-title">📜 Scroll Menu Enhancement</h2>
+        <div class="demo-description">
+            <strong>Menu section giờ có scroll với visual indicators:</strong>
+        </div>
+        <div style="padding: 20px;">
+            <div class="code-example">
+/* Enhanced scrolling with indicators */
+.menu-section {
+    max-height: 350px;  /* Increased from 300px */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c0c0c0 #f0f0f0;
+}
+
+.menu-section.scrolled-top::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+}
+
+.menu-section.scrolled-bottom::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+}
+            </div>
+            <ul class="feature-list">
+                <li>Tăng max-height từ 300px lên 350px</li>
+                <li>Custom scrollbar styling</li>
+                <li>Visual scroll indicators (top/bottom gradients)</li>
+                <li>Smooth scroll behavior</li>
+                <li>Auto-show indicators khi có content overflow</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2 class="demo-title">🔄 Development Workflow</h2>
+        <div style="padding: 20px;">
+            <h4>✅ Để sửa chức năng hiện tại:</h4>
+            <div class="code-example">
+🔍 WHOIS Issues        → Edit js/whois-handler.js
+🌍 IP Info Issues      → Edit js/ipinfo-handler.js  
+📋 DNS Records Issues  → Edit js/dns-records-handler.js
+🎨 UI/Layout Issues    → Edit js/ui-manager.js
+🔧 Utils Issues        → Edit js/domain-utils.js
+📋 Main Logic Issues   → Edit js/popup-main.js
+            </div>
+
+            <h4>✅ Để thêm chức năng mới:</h4>
+            <div class="code-example">
+1. Tạo file: js/new-feature-handler.js
+2. Follow class pattern:
+   class NewFeatureHandler {
+       constructor(elements) { /* init */ }
+       async handleAction() { /* logic */ }
+       setLoadingState(loading) { /* UI */ }
+       showError(message) { /* error */ }
+   }
+   window.NewFeatureHandler = NewFeatureHandler;
+
+3. Update popup-main.js: initialize + events
+4. Update popup.html: add script tag
+            </div>
+        </div>
+    </div>
+
+    <div class="migration-note">
+        <h4>📌 Migration & Backup</h4>
+        <ul>
+            <li><strong>Backup:</strong> File cũ được backup thành <code>popup-old-backup.js</code></li>
+            <li><strong>Rollback:</strong> Có thể rollback bằng cách rename files nếu cần</li>
+            <li><strong>Compatibility:</strong> HTML updated với script tags mới</li>
+            <li><strong>CSS:</strong> Enhanced với scroll indicators và animations</li>
+            <li><strong>No Breaking Changes:</strong> Background.js và manifest.json không thay đổi</li>
+        </ul>
+    </div>
+
+    <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px; padding: 15px; margin: 20px 0;">
+        <h4 style="color: #155724; margin-top: 0;">🎉 Version 1.6.0 Achievements:</h4>
+        <ul style="color: #155724;">
+            <li>✅ <strong>Modular Architecture:</strong> 6 specialized modules</li>
+            <li>✅ <strong>Enhanced Scrolling:</strong> Menu với scroll indicators</li>
+            <li>✅ <strong>Better Maintainability:</strong> ~200-300 lines per file</li>
+            <li>✅ <strong>Improved Organization:</strong> Clear separation of concerns</li>
+            <li>✅ <strong>Development-Friendly:</strong> Easy to add/modify features</li>
+            <li>✅ <strong>Performance:</strong> Cleaner code structure</li>
+            <li>✅ <strong>Documentation:</strong> MODULAR_ARCHITECTURE.md guide</li>
+        </ul>
+    </div>
+
+    <hr style="margin: 40px 0; border: 1px solid #ddd;">
+    
+    <p style="text-align: center; color: #666; font-style: italic;">
+        🎯 <strong>Architecture Upgrade Complete:</strong> Từ monolithic thành modular - Dễ maintain, dễ phát triển!
+    </p>
+</body>
+</html>

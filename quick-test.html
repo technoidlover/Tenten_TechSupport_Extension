@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Test Parser</title>
+</head>
+<body>
+    <h1>Quick Pattern Test</h1>
+    <script>
+        // Test HTML từ response thực tế
+        const testHTML = `
+            <tr>
+            <td><span>Cờ trạng thái <a href="#" class="status_flags" aria-hidden="true" data-toggle="tooltip" data-html="true" data-placement="top" data-original-title="Cờ trạng thái tên miền là gì?"></a>:</span>
+            </td>
+            <td><ul>
+                <li>clientTransferProhibited</li>
+            </ul></td>
+            </tr>
+            <tr>
+            <td><span>Nameservers <a href="#" class="status_flags" aria-hidden="true" data-toggle="tooltip" data-html="true" data-placement="top" data-original-title="DNS là gì?"></a>:</span></td>
+            <td><ul>
+                <li>rayne.ns.cloudflare.com</li><li>zac.ns.cloudflare.com</li>
+            </ul></td>
+            </tr>
+        `;
+        
+        console.log('Testing HTML:', testHTML);
+        
+        // Test status pattern
+        const statusMatch = testHTML.match(/Cờ trạng thái[\s\S]*?<ul>([\s\S]*?)<\/ul>/i);
+        if (statusMatch) {
+            console.log('Status match found:', statusMatch[1]);
+            const statusItems = statusMatch[1].match(/<li[^>]*>([^<]+)<\/li>/gi);
+            if (statusItems) {
+                const statuses = statusItems.map(item => item.replace(/<[^>]*>/g, '').trim());
+                console.log('Status values:', statuses);
+            }
+        } else {
+            console.log('Status pattern NOT matched');
+        }
+        
+        // Test nameservers pattern
+        const nsMatch = testHTML.match(/Nameservers[\s\S]*?<ul>([\s\S]*?)<\/ul>/i);
+        if (nsMatch) {
+            console.log('Nameservers match found:', nsMatch[1]);
+            const nsItems = nsMatch[1].match(/<li[^>]*>([^<]+)<\/li>/gi);
+            if (nsItems) {
+                const nameServers = nsItems.map(item => item.replace(/<[^>]*>/g, '').trim());
+                console.log('Nameserver values:', nameServers);
+            }
+        } else {
+            console.log('Nameservers pattern NOT matched');
+        }
+        
+        // Test date patterns
+        const testDates = `
+            <tr>
+            <td>Ngày đăng ký : </td>
+            <td>16/01/2025</td>
+            </tr>
+            <tr>
+            <td>Ngày hết hạn : </td>
+            <td><strong>16/01/2026</strong></td>
+            </tr>
+        `;
+        
+        console.log('Testing dates:', testDates);
+        
+        const regDateMatch = testDates.match(/<td[^>]*>Ngày đăng ký\s*:\s*<\/td>\s*<td[^>]*>([^<]+)<\/td>/i);
+        if (regDateMatch) {
+            console.log('Registration date found:', regDateMatch[1]);
+        }
+        
+        const expDateMatch = testDates.match(/<td[^>]*>Ngày hết hạn\s*:\s*<\/td>\s*<td[^>]*>(?:<strong[^>]*>)?([^<]+)(?:<\/strong>)?<\/td>/i);
+        if (expDateMatch) {
+            console.log('Expiration date found:', expDateMatch[1]);
+        }
+    </script>
+</body>
+</html>

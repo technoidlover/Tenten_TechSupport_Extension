@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 New Resizable UI - Demo Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+        }
+        .feature {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .demo-steps {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .demo-steps h3 {
+            color: #1976d2;
+            margin-top: 0;
+        }
+        .demo-steps ol {
+            margin: 10px 0;
+        }
+        .demo-steps li {
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .comparison .old, .comparison .new {
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .comparison .old {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        .comparison .new {
+            background: #e8f5e8;
+            border-left: 4px solid #4caf50;
+        }
+        .tech-details {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .tech-details h3 {
+            color: #7b1fa2;
+            margin-top: 0;
+        }
+        .code {
+            background: #263238;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .benefit {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .benefit .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Version 1.5.0 - Resizable UI & Horizontal Layout</h1>
+        
+        <div class="highlight">
+            <strong>🎉 Major Update:</strong> Extension popup giờ đây có thể resize và hiển thị kết quả theo chiều ngang, cho phép sử dụng nhiều chức năng cùng lúc mà không mất dữ liệu!
+        </div>
+
+        <div class="feature">
+            <h3>🎨 Giao diện mới hoàn toàn</h3>
+            <p><strong>Trước:</strong> Popup cố định 420px, chỉ hiển thị được 1 chức năng tại 1 thời điểm</p>
+            <p><strong>Bây giờ:</strong> Popup có thể expand đến 1200px, hiển thị kết quả bên phải, dùng được nhiều chức năng</p>
+        </div>
+
+        <div class="comparison">
+            <div class="old">
+                <h4>❌ Cũ (v1.4.x)</h4>
+                <ul>
+                    <li>Cố định 420px width</li>
+                    <li>Chọn WHOIS → thấy kết quả</li>
+                    <li>Chọn IP Info → mất kết quả WHOIS</li>
+                    <li>Phải chọn lại để xem kết quả cũ</li>
+                </ul>
+            </div>
+            <div class="new">
+                <h4>✅ Mới (v1.5.0)</h4>
+                <ul>
+                    <li>Resize được từ 420px đến 1200px</li>
+                    <li>Chọn WHOIS → kết quả hiện ở bên phải</li>
+                    <li>Chọn IP Info → kết quả IP Info hiện bên phải</li>
+                    <li>Có thể đóng panel để quay về compact</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-steps">
+            <h3>🧪 Cách test tính năng mới</h3>
+            <ol>
+                <li><strong>Load Extension:</strong> Reload extension trong Chrome (chrome://extensions/)</li>
+                <li><strong>Mở Popup:</strong> Click icon extension để mở popup</li>
+                <li><strong>Test WHOIS:</strong>
+                    <ul>
+                        <li>Nhập domain (vd: google.com)</li>
+                        <li>Click "WHOIS Lookup"</li>
+                        <li>➡️ Extension sẽ expand sang phải, hiển thị kết quả WHOIS</li>
+                    </ul>
+                </li>
+                <li><strong>Test Multi-Function:</strong>
+                    <ul>
+                        <li>Giữ kết quả WHOIS, nhập domain khác</li>
+                        <li>Click "IP/Domain Info"</li>
+                        <li>➡️ Right panel sẽ switch sang IP Info, nhưng không mất WHOIS data</li>
+                    </ul>
+                </li>
+                <li><strong>Test Close Panel:</strong>
+                    <ul>
+                        <li>Click nút "×" ở góc phải của right panel</li>
+                        <li>➡️ Extension thu nhỏ về 420px ban đầu</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="benefits">
+            <div class="benefit">
+                <div class="icon">🔄</div>
+                <h4>Đa nhiệm</h4>
+                <p>Chuyển đổi giữa các chức năng mà không mất data</p>
+            </div>
+            <div class="benefit">
+                <div class="icon">📏</div>
+                <h4>Resize</h4>
+                <p>Popup có thể thay đổi kích thước theo nhu cầu</p>
+            </div>
+            <div class="benefit">
+                <div class="icon">⚡</div>
+                <h4>Hiệu quả</h4>
+                <p>Làm việc nhanh hơn với giao diện thông minh</p>
+            </div>
+            <div class="benefit">
+                <div class="icon">🎯</div>
+                <h4>Tiện dụng</h4>
+                <p>Tự động expand/collapse theo context</p>
+            </div>
+        </div>
+
+        <div class="tech-details">
+            <h3>🛠️ Chi tiết kỹ thuật</h3>
+            <p><strong>Layout System:</strong></p>
+            <div class="code">
+.main-content {
+    display: flex;
+    transition: all 0.3s ease;
+}
+
+.left-panel {
+    flex: 0 0 420px;  /* Fixed left panel */
+}
+
+.right-panel {
+    flex: 1;
+    min-width: 380px;  /* Expandable right panel */
+    display: none;
+}
+
+.container.expanded {
+    min-width: 800px;  /* Auto-expand when needed */
+}</div>
+            
+            <p><strong>Functions Added:</strong></p>
+            <ul>
+                <li><code>showRightPanel(title, content)</code> - Hiển thị right panel với content type</li>
+                <li><code>closeRightPanel()</code> - Đóng right panel và thu nhỏ extension</li>
+                <li><code>hideAllSections()</code> - Ẩn tất cả sections để switch context</li>
+            </ul>
+
+            <p><strong>Smart Panel Management:</strong></p>
+            <ul>
+                <li>Tự động expand container khi cần hiển thị results</li>
+                <li>Smooth CSS transitions cho UX tốt hơn</li>
+                <li>Panel state được quản lý thông minh</li>
+                <li>Responsive design cho nhiều screen sizes</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>🚀 Kết quả:</strong> Bây giờ extension hoạt động giống như một mini app với multiple panels, giúp công việc tra cứu DNS/WHOIS/IP Info hiệu quả hơn rất nhiều!
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding: 20px; background: #667eea; color: white; border-radius: 8px;">
+            <h3 style="margin: 0;">🎉 Ready to test!</h3>
+            <p style="margin: 10px 0 0 0;">Load extension và trải nghiệm giao diện mới ngay!</p>
+        </div>
+    </div>
+</body>
+</html>
