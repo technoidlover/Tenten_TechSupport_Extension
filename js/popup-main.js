@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Setup tab listener for future updates
         setupTabListener();
         
-        console.log('=== Popup Initialized v1.6.4 INSTANT ===');
+        console.log('=== Popup Initialized v1.6.5 ALWAYS READY ===');
     }
 
     function setupTabListener() {
@@ -147,13 +147,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setInitialStates() {
-        // DNS Automation - requires Tenten page
-        elements.dnsAutomationBtn.classList.add('disabled');
-        elements.dnsAutomationBtn.style.pointerEvents = 'none';
+        // DNS Automation - ALWAYS ENABLED v1.6.5
+        elements.dnsAutomationBtn.classList.remove('disabled');
+        elements.dnsAutomationBtn.style.pointerEvents = 'auto';
+        elements.dnsAutomationBtn.style.opacity = '1';
+        elements.dnsAutomationBtn.style.cursor = 'pointer';
         const dnsStatus = elements.dnsAutomationBtn.querySelector('.menu-status');
         if (dnsStatus) {
-            dnsStatus.textContent = 'TENTEN';
-            dnsStatus.className = 'menu-status needs-tenten';
+            dnsStatus.textContent = 'READY';
+            dnsStatus.className = 'menu-status ready';
         }
         
         // Enable ready features
@@ -199,9 +201,9 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
             
-            console.log('=== INSTANT Tenten Status Check v1.6.4 ===');
+            console.log('=== DNS Always Ready v1.6.5 ===');
             console.log('Tab URL:', tab.url);
-            console.log('ZERO DELAY - Instant response mode');
+            console.log('DNS Button: ALWAYS ENABLED');
             
             // Ultra-fast check: just check URL contains domain.tenten.vn
             const isOnTentenDomain = tab.url && tab.url.includes('domain.tenten.vn');
@@ -212,11 +214,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('🟢 INSTANT: Tenten domain detected - enabling DNS NOW');
                 window.uiManager.updateStatus(true, 'Sẵn sàng DNS Automation');
                 
-                // Enable DNS Automation INSTANTLY
-                elements.dnsAutomationBtn.classList.remove('disabled');
-                elements.dnsAutomationBtn.style.pointerEvents = 'auto';
-                elements.dnsAutomationBtn.style.opacity = '1';
-                elements.dnsAutomationBtn.style.filter = 'none';
+                // Enable DNS Automation INSTANTLY - Force Mode v1.6.4
+                forceEnableDnsButton();
                 
                 const dnsStatus = elements.dnsAutomationBtn.querySelector('.menu-status');
                 if (dnsStatus) {
@@ -227,31 +226,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('� DNS Button enabled INSTANTLY - NO DELAY');
                 
             } else {
-                console.log('🔴 Not on Tenten - disabling DNS');
-                window.uiManager.updateStatus(false, 'Cần mở domain.tenten.vn');
+                console.log('� Not on Tenten - but DNS still enabled');
+                window.uiManager.updateStatus(true, 'DNS luôn sẵn sàng');
                 
-                // Disable DNS Automation
-                elements.dnsAutomationBtn.classList.add('disabled');
-                elements.dnsAutomationBtn.style.pointerEvents = 'none';
-                elements.dnsAutomationBtn.style.opacity = '0.6';
-                elements.dnsAutomationBtn.style.filter = 'grayscale(1)';
+                // Keep DNS Automation enabled - v1.6.5 Always Ready
+                forceEnableDnsButton();
                 
                 const dnsStatus = elements.dnsAutomationBtn.querySelector('.menu-status');
                 if (dnsStatus) {
-                    dnsStatus.textContent = 'TENTEN';
-                    dnsStatus.className = 'menu-status needs-tenten';
+                    dnsStatus.textContent = 'READY';
+                    dnsStatus.className = 'menu-status ready';
                 }
                 
-                console.log('DNS Button disabled - need Tenten page');
+                console.log('✅ DNS Button always enabled - any page');
             }
         } catch (error) {
-            console.error('Error in instant check:', error);
+            console.error('Error checking status:', error);
             
-            // Disable on error
-            elements.dnsAutomationBtn.classList.add('disabled');
-            elements.dnsAutomationBtn.style.pointerEvents = 'none';
-            elements.dnsAutomationBtn.style.opacity = '0.6';
-            window.uiManager.updateStatus(false, 'Lỗi kiểm tra trang');
+            // Keep DNS button enabled even on error - v1.6.5
+            forceEnableDnsButton();
+            window.uiManager.updateStatus(true, 'DNS luôn sẵn sàng');
         }
     }
 
@@ -404,6 +398,32 @@ document.addEventListener('DOMContentLoaded', function() {
         window.uiManager.addLog('5. Hỗ trợ 12 loại bản ghi DNS phổ biến', 'info');
     }
 
+    // Force enable DNS button function - v1.6.4 fix
+    function forceEnableDnsButton() {
+        console.log('=== FORCE ENABLE DNS BUTTON v1.6.4 ===');
+        
+        // Remove ALL possible blocking
+        elements.dnsAutomationBtn.classList.remove('disabled');
+        elements.dnsAutomationBtn.removeAttribute('disabled');
+        elements.dnsAutomationBtn.style.pointerEvents = 'auto';
+        elements.dnsAutomationBtn.style.opacity = '1';
+        elements.dnsAutomationBtn.style.filter = 'none';
+        elements.dnsAutomationBtn.style.cursor = 'pointer';
+        elements.dnsAutomationBtn.style.background = '';
+        elements.dnsAutomationBtn.disabled = false;
+        
+        // Check computed styles for debugging
+        const computedStyle = window.getComputedStyle(elements.dnsAutomationBtn);
+        console.log('=== DNS Button State Check ===');
+        console.log('Has disabled class:', elements.dnsAutomationBtn.classList.contains('disabled'));
+        console.log('Style pointer-events:', elements.dnsAutomationBtn.style.pointerEvents);
+        console.log('Style opacity:', elements.dnsAutomationBtn.style.opacity);
+        console.log('Computed pointer-events:', computedStyle.pointerEvents);
+        console.log('Computed opacity:', computedStyle.opacity);
+        
+        console.log('✅ Force enable complete - button should be clickable now');
+    }
+
     // Listen for messages from content script
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log('Popup received message:', message);
@@ -471,5 +491,5 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('=== INSTANT RESPONSE MODE v1.6.4 ===');
     console.log('NO POLLING - Pure event-driven instant detection');
     
-    console.log('=== Popup Script Loaded Successfully v1.6.4 INSTANT ===');
+    console.log('=== Popup Script Loaded Successfully v1.6.5 ALWAYS READY ===');
 });

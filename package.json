@@ -1,6 +1,6 @@
 {
   "name": "runsystem-tenten-dns-automation",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "Extension for Runsystem's Techsupport - DNS Automation + WHOIS Lookup + IP/Domain Info + DNS Records Checker",
   "author": "Runsystem Techsupport Team",
   "license": "MIT",

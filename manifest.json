@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Runsystem Tenten DNS Automation",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "Extension for Runsystem's Techsupport - DNS Automation + WHOIS Lookup + IP/Domain Info + DNS Records Checker",
   "permissions": [
     "activeTab",

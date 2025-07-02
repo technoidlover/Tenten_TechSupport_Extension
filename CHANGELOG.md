@@ -1,3 +1,31 @@
+# 🚀 Version 1.6.5 - DNS ALWAYS READY
+
+## ⚡ ALWAYS ENABLED MODE v1.6.5:
+- **DNS Button luôn sáng**: Không cần kiểm tra domain.tenten.vn nữa
+- **Ready mọi trang**: DNS Automation available ở bất kỳ trang web nào
+- **Zero Restrictions**: Loại bỏ hoàn toàn logic kiểm tra domain requirement
+- **Instant Access**: Bấm được ngay lập tức, không delay hay disable
+- **Always Status READY**: Nút luôn hiển thị "READY" màu xanh
+
+## 🎯 Major Changes v1.6.5:
+- **setInitialStates()**: DNS button enabled by default from start
+- **checkTentenPageStatus()**: Always enable, never disable button
+- **Error Handling**: Keep enabled even on connection errors
+- **Status Updates**: Change text but never disable functionality
+- **Force Enable**: Call forceEnableDnsButton() in all scenarios
+
+## 🔧 Technical Removals:
+- **Domain Check Logic**: No more domain.tenten.vn requirement
+- **Disable States**: No more disabled class or pointer-events none
+- **Error Disabling**: No more button disable on errors
+- **TENTEN Status**: No more "TENTEN" status, always "READY"
+
+## ✅ New Behavior:
+- **Any Page**: DNS button sáng "READY" và clickable
+- **All Times**: Button enabled with opacity 1, cursor pointer
+- **No Blocks**: No more "Cần mở domain.tenten.vn" restrictions
+- **User Freedom**: Access DNS automation from anywhere
+
 # 🚀 Version 1.6.4 - ULTRA INSTANT Zero-Delay Detection
 
 ## ⚡ INSTANT RESPONSE v1.6.4:
