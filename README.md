@@ -1,6 +1,6 @@
 # Runsystem Tenten DNS Automation
 
-Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT để trỏ domain Tenten về Ladipage + WHOIS Lookup.
+Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT để trỏ domain Tenten về Ladipage + WHOIS Lookup + IP Widget.
 
 ## Tính năng hiện tại
 
@@ -29,6 +29,28 @@ Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT đ�
 - **Giao diện trực quan**: Hiển thị thông tin dễ đọc với loading states
 - **Hoạt động độc lập**: Không cần truy cập domain.tenten.vn để sử dụng WHOIS
 
+### ✅ IP Widget (Mới - v2.2.0)
+
+- **Hiển thị thông tin IP real-time**: Widget hiển thị ở góc dưới bên phải **TẤT CẢ** các trang web
+- **Thông tin chi tiết**:
+  - Tên miền hiện tại
+  - Địa chỉ IPv4
+  - Địa chỉ IPv6 (nếu có)
+  - Thông tin server
+- **Tương tác người dùng**:
+  - Kéo thả widget đến vị trí tùy ý
+  - Thu gọn/mở rộng bằng nút toggle hoặc double-click
+  - Refresh thông tin bằng nút Refresh
+  - Phím tắt `Ctrl+Shift+I` để ẩn/hiện widget
+  - Tự động lưu vị trí và trạng thái
+- **Tự động hóa**:
+  - Tự động hiển thị trên mọi trang HTTP/HTTPS
+  - Tự động refresh khi chuyển tab
+  - Tự động detect domain change cho SPA
+  - Thông báo welcome khi lần đầu truy cập domain
+- **DNS Resolution**: Sử dụng Google DNS-over-HTTPS API
+- **Performance**: Tối ưu hóa với error handling và graceful degradation
+
 ### 🔄 Tính năng sắp tới
 - **Webhook Records**: Quản lý webhook DNS
 - **Custom Records**: Tạo bản ghi tùy chỉnh  
@@ -48,7 +70,15 @@ Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT đ�
    - Click "DNS Automation"
    - Chờ extension tự động tạo các bản ghi
 
-3. **Sử dụng WHOIS Lookup**
+3. **Sử dụng IP Widget**
+   - IP Widget sẽ tự động hiển thị ở góc dưới bên phải mọi trang web
+   - Kéo thả widget đến vị trí mong muốn
+   - Thu gọn/mở rộng bằng nút "-" hoặc "+"
+   - Click "🔄 Refresh" để cập nhật thông tin IP
+   - Widget sẽ tự động lưu vị trí và trạng thái
+   - Mở file `IP_WIDGET_DEMO.html` để test widget
+
+4. **Sử dụng WHOIS Lookup**
    - Click vào extension icon
    - Nhập tên miền cần tra cứu (ví dụ: google.com)
    - Click "WHOIS Lookup"

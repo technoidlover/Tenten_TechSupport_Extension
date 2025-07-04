@@ -1,0 +1,36 @@
+{
+   "background": {
+      "service_worker": "worker.js"
+   },
+   "content_scripts": [ {
+      "css": [ "data/ip.css" ],
+      "js": [ "data/verify.js" ],
+      "matches": [ "*://*/*" ],
+      "run_at": "document_start"
+   } ],
+   "description": "Displays server IP address on every website",
+   "homepage_url": "https://webextension.org/listing/country-flags.html?from=server-ip",
+   "host_permissions": [ "*://*/*" ],
+   "icons": {
+      "128": "data/icons/128.png",
+      "16": "data/icons/16.png",
+      "256": "data/icons/256.png",
+      "32": "data/icons/32.png",
+      "48": "data/icons/48.png",
+      "512": "data/icons/512.png",
+      "64": "data/icons/64.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAgRREOvma1eXNpER+dV5SFbQ/XizCzELp85fTPIeWoJhll5xY1fLIJgyvRUSnHQ77F94e3pDJO327sil8h89ReGSm4CHwzMKJU+cJCNBJsYe/V5m2JrDkl554AyjId6EmjWqgRRbJccZLM/dM0nWrYtK7eKW7T3ZN/+W9y6FINBF5uAd85DYQ+xwIeDK9+Sv92yTJr5ALJ20Ma/m/PLh+oEWK5ZglXk7lsdKeVIVNfUw+McTM+GJpl1l18f8hJg5zmxzJkmBqcvJ94NdZCt78CnmzfvUgXM465y1Cx6kn0M5KgawtQ7UYBLNGBKmkaFfcSOw4zsmUpyp1arkvwcw2SwIDAQAB",
+   "manifest_version": 3,
+   "name": "Server IP",
+   "options_ui": {
+      "page": "data/options/index.html"
+   },
+   "permissions": [ "storage", "webRequest", "scripting", "alarms" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "0.2.7",
+   "web_accessible_resources": [ {
+      "matches": [ "*://*/*" ],
+      "resources": [ "data/ip/*" ]
+   } ]
+}

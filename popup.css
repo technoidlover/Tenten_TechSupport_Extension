@@ -343,6 +343,14 @@ body.expanded {
     cursor: not-allowed;
 }
 
+/* Focus states */
+.lookup-dns-btn:focus,
+.domain-input:focus,
+.record-type-select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
 /* Common Section Styles */
 .whois-section,
 .ipinfo-section,
@@ -625,14 +633,6 @@ body.expanded {
     border: 1px solid #ffeaa7;
     border-radius: 4px;
     font-size: 11px;
-}
-
-/* Focus states */
-.lookup-dns-btn:focus,
-.domain-input:focus,
-.record-type-select:focus {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
 }
 
 /* Responsive */

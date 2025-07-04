@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Runsystem Tenten DNS Automation",
-  "version": "2.1.0",
-  "description": "Extension for Runsystem's Techsupport - WHOIS Lookup + IP/Domain Info + DNS Records Checker + Auto Ladipage DNS",
+  "version": "2.2.0",
+  "description": "Extension for Runsystem's Techsupport - WHOIS Lookup + IP/Domain Info + DNS Records Checker + Auto Ladipage DNS + IP Widget",
   "permissions": [
     "activeTab",
     "storage",
@@ -30,6 +30,11 @@
       "matches": ["https://domain.tenten.vn/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["ip-widget-content.js"],
+      "run_at": "document_end"
     }
   ],
   "background": {
