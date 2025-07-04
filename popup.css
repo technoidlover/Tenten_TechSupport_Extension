@@ -18,7 +18,7 @@ body {
 }
 
 body.expanded {
-    width: 800px;
+    width: 820px; /* Increased from 800px to show full panel */
     max-width: 1200px;
 }
 
@@ -28,10 +28,12 @@ body.expanded {
     min-height: 600px;
     height: 600px;
     width: 100%;
+    min-width: 420px; /* Minimum width for left panel */
     display: flex;
     flex-direction: row;
     box-sizing: border-box;
     position: relative;
+    overflow: visible; /* Allow content to extend beyond */
 }
 
 .main-content {
@@ -222,9 +224,9 @@ body.expanded {
 
 /* Right Panel */
 .right-panel {
-    flex: 0 0 380px;
-    min-width: 380px;
-    max-width: 380px;
+    flex: 0 0 400px; /* Increased from 380px */
+    min-width: 400px; /* Increased from 380px */
+    max-width: 400px; /* Increased from 380px */
     background: #f8f9fa;
     border-left: 1px solid #e9ecef;
     display: flex;
@@ -233,7 +235,7 @@ body.expanded {
     max-height: 600px;
     overflow-y: auto;
     box-sizing: border-box;
-    transform: translateX(100%);
+    transform: translateX(0); /* Changed from translateX(100%) to show immediately */
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     opacity: 0;
     visibility: hidden;
@@ -634,9 +636,9 @@ body.expanded {
 }
 
 /* Responsive */
-@media (max-width: 800px) {
+@media (max-width: 850px) {
     body.expanded {
-        width: 800px;
+        width: 820px; /* Match the expanded width */
     }
     
     .right-panel {
@@ -646,6 +648,7 @@ body.expanded {
         height: 100vh;
         z-index: 1000;
         background: white;
+        transform: translateX(100%); /* Hide off-screen initially */
     }
     
     body.expanded .right-panel.active {
