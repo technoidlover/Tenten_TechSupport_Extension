@@ -10,15 +10,19 @@
   position: fixed !important;
   bottom: 18px !important;
   right: 18px !important;
-  width: 200px !important;
+  width: 220px !important;
+  max-width: 220px !important;
   background: #fff !important;
   border: 1px solid #e9ecef !important;
   border-radius: 6px !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.13) !important;
   z-index: 2147483647 !important;
-  font-size: 11px !important;
+  font-size: 13px !important;
   color: #333 !important;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  overflow: hidden !important;
+  top: auto !important;
+  left: auto !important;
 }
 #tenten-ip-widget-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
@@ -28,28 +32,71 @@
   justify-content: space-between !important;
   align-items: center !important;
   border-radius: 6px 6px 0 0 !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
+  cursor: default !important;
+  user-select: none !important;
 }
 #tenten-ip-widget-content {
-  padding: 8px 10px 6px 10px !important;
+  padding: 10px 12px 8px 12px !important;
 }
 .tenten-ip-row {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 4px;
+  display: flex !important; 
+  align-items: center !important;
+  margin-bottom: 6px !important;
+  min-height: 16px !important;
 }
 .tenten-ip-label {
-  color: #495057; font-weight: 600; font-size: 10px;
+  color: #495057 !important; 
+  font-weight: 700 !important; 
+  font-size: 12px !important;
+  flex-shrink: 0 !important;
+  width: 50px !important;
 }
 .tenten-ip-value {
-  color: #333; font-family: 'Consolas', monospace; font-size: 10px;
-  margin-left: 8px; word-break: break-all;
+  color: #333 !important; 
+  font-family: 'Consolas', monospace !important; 
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  margin-left: 8px !important; 
+  word-break: break-all !important;
+  flex: 1 !important;
 }
-#tenten-ip-refresh {
-  width: 100%; margin-top: 4px; padding: 3px 0; font-size: 10px;
-  background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 3px;
-  cursor: pointer; color: #333;
+#tenten-header-refresh {
+  background: rgba(255,255,255,0.2) !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  border-radius: 3px !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  margin-left: 6px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
-#tenten-ip-refresh:hover { background: #e9ecef; }
+#tenten-header-refresh:hover {
+  background: rgba(255,255,255,0.3) !important;
+}
+#tenten-header-close {
+  background: rgba(255,255,255,0.2) !important;
+  border: 1px solid rgba(255,255,255,0.3) !important;
+  border-radius: 3px !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  margin-left: 4px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+#tenten-header-close:hover {
+  background: rgba(255,100,100,0.4) !important;
+}
+#tenten-flag {
+  margin-left: 8px !important; 
+  font-size: 16px !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+}
 `;
     document.head.appendChild(style);
 
@@ -59,66 +106,111 @@
     widget.innerHTML = `
       <div id="tenten-ip-widget-header">
         <span>🌐 IP & Server</span>
-        <button id="tenten-ip-refresh" title="Refresh">🔄</button>
+        <div>
+          <button id="tenten-header-refresh" title="Refresh">🔄</button>
+          <button id="tenten-header-close" title="Close">✕</button>
+        </div>
       </div>
       <div id="tenten-ip-widget-content">
-        <div class="tenten-ip-row"><span class="tenten-ip-label">IP:</span><span class="tenten-ip-value" id="tenten-ipv4">...</span></div>
-        <div class="tenten-ip-row"><span class="tenten-ip-label">Server:</span><span class="tenten-ip-value" id="tenten-server">...</span></div>
+        <div class="tenten-ip-row">
+          <span class="tenten-ip-label">IP:</span>
+          <span class="tenten-ip-value" id="tenten-ipv4">...</span>
+          <span id="tenten-flag"></span>
+        </div>
+        <div class="tenten-ip-row">
+          <span class="tenten-ip-label">Server:</span>
+          <span class="tenten-ip-value" id="tenten-server">...</span>
+        </div>
       </div>
     `;
     document.body.appendChild(widget);
 
-    // Drag
-    let drag = false, startX, startY, startLeft, startTop;
-    widget.querySelector('#tenten-ip-widget-header').addEventListener('mousedown', e => {
-      drag = true;
-      startX = e.clientX; startY = e.clientY;
-      const rect = widget.getBoundingClientRect();
-      startLeft = rect.left; startTop = rect.top;
-      document.body.style.userSelect = 'none';
-    });
-    document.addEventListener('mousemove', e => {
-      if (!drag) return;
-      let l = startLeft + (e.clientX - startX);
-      let t = startTop + (e.clientY - startY);
-      l = Math.max(0, Math.min(l, window.innerWidth - widget.offsetWidth));
-      t = Math.max(0, Math.min(t, window.innerHeight - widget.offsetHeight));
-      widget.style.left = l + 'px';
-      widget.style.top = t + 'px';
-      widget.style.right = 'auto';
-      widget.style.bottom = 'auto';
-    });
-    document.addEventListener('mouseup', () => { drag = false; document.body.style.userSelect = ''; });
+    // Close button functionality
+    document.getElementById('tenten-header-close').onclick = () => {
+      widget.remove();
+      // Reset injection flag so widget can be recreated if needed
+      window.tentenIpWidgetInjected = false;
+    };
 
-    // Fetch IP & Server
+    // Refresh button functionality
+    document.getElementById('tenten-header-refresh').onclick = updateIpInfo;
+
+    // Fetch IP & Server info
     async function updateIpInfo() {
       const ipEl = document.getElementById('tenten-ipv4');
       const serverEl = document.getElementById('tenten-server');
+      const flagEl = document.getElementById('tenten-flag');
+      
+      // Reset to loading state
       ipEl.textContent = '...';
       serverEl.textContent = '...';
+      flagEl.textContent = '';
+      flagEl.title = '';
+      
       try {
-        // Get IPv4
+        // Get IPv4 address
         const domain = window.location.hostname;
-        const dns = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
-        const data = await dns.json();
-        let ip = null;
-        if (data.Answer && Array.isArray(data.Answer)) {
-          ip = data.Answer.find(a => a.type === 1 && /^\d+\.\d+\.\d+\.\d+$/.test(a.data));
-          ip = ip ? ip.data : null;
+        const dnsResponse = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
+        const dnsData = await dnsResponse.json();
+        
+        let ipv4 = null;
+        if (dnsData.Answer && Array.isArray(dnsData.Answer)) {
+          const ipRecord = dnsData.Answer.find(record => 
+            record.type === 1 && /^\d+\.\d+\.\d+\.\d+$/.test(record.data)
+          );
+          ipv4 = ipRecord ? ipRecord.data : null;
         }
-        ipEl.textContent = ip || 'Not found';
-        // Get server header
-        let server = '';
+        
+        // Display IP
+        ipEl.textContent = ipv4 || 'Not found';
+        
+        // Get country flag from IP
+        if (ipv4 && /^\d+\.\d+\.\d+\.\d+$/.test(ipv4)) {
+          try {
+            const geoResponse = await fetch(`https://ipapi.co/${ipv4}/json/`);
+            const geoData = await geoResponse.json();
+            
+            if (geoData.country_code) {
+              const flag = countryCodeToFlag(geoData.country_code);
+              flagEl.textContent = flag;
+              flagEl.title = geoData.country_name || geoData.country_code;
+            }
+          } catch (geoError) {
+            console.log('Could not fetch geo info:', geoError);
+          }
+        }
+        
+        // Get server info
+        let serverInfo = 'Unknown';
         try {
-          const resp = await fetch(window.location.origin, { method: 'HEAD' });
-          server = resp.headers.get('Server') || '';
-        } catch {}
-        serverEl.textContent = server || 'Unknown';
-      } catch (e) {
+          const serverResponse = await fetch(window.location.origin, { method: 'HEAD' });
+          const serverHeader = serverResponse.headers.get('Server');
+          if (serverHeader) {
+            serverInfo = serverHeader;
+          }
+        } catch (serverError) {
+          console.log('Could not fetch server info:', serverError);
+        }
+        
+        serverEl.textContent = serverInfo;
+        
+      } catch (error) {
+        console.error('Error updating IP info:', error);
         ipEl.textContent = 'Error';
         serverEl.textContent = 'Error';
       }
     }
+    
+    // Convert country code to flag emoji
+    function countryCodeToFlag(countryCode) {
+      if (!countryCode || countryCode.length !== 2) return '';
+      const codePoints = countryCode
+        .toUpperCase()
+        .split('')
+        .map(char => 127397 + char.charCodeAt());
+      return String.fromCodePoint(...codePoints);
+    }
+    
+    // Initialize
     updateIpInfo();
-    document.getElementById('tenten-ip-refresh').onclick = updateIpInfo;
 })();

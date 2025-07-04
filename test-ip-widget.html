@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Widget Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        h1 { color: #333; }
+        h2 { color: #666; }
+        .note {
+            background: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+        }
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+        }
+        .test-content {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌐 Tenten IP Widget Test Page</h1>
+    
+    <div class="instructions">
+        <h2>Test Instructions:</h2>
+        <ol>
+            <li>Load this page in Chrome with the extension enabled</li>
+            <li>Look for the IP widget in the bottom-right corner</li>
+            <li>Test dragging the widget by clicking and holding the header</li>
+            <li>Double-click the header to reset widget position</li>
+            <li>Click the refresh button (🔄) to update IP/server info</li>
+            <li>Check if the country flag appears next to the IP</li>
+            <li>Test on different websites to ensure the widget works everywhere</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>Expected Features:</h2>
+        <div class="note">
+            <strong>Widget should display:</strong>
+            <ul>
+                <li>✅ IPv4 address of current website</li>
+                <li>✅ Country flag emoji next to IP (with hover tooltip)</li>
+                <li>✅ Server information from HTTP headers</li>
+                <li>✅ Compact refresh button in header</li>
+                <li>✅ Draggable by header (cursor: move)</li>
+                <li>✅ Double-click header to reset position</li>
+                <li>✅ Constrained to viewport boundaries</li>
+                <li>✅ No layout issues when dragging</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Different Scenarios:</h2>
+        <div class="test-content">
+            <p>Try visiting these types of websites:</p>
+            <ul>
+                <li><strong>Regular websites:</strong> google.com, facebook.com, youtube.com</li>
+                <li><strong>CDN websites:</strong> github.com, stackoverflow.com</li>
+                <li><strong>Different servers:</strong> nginx, Apache, IIS</li>
+                <li><strong>Different countries:</strong> websites hosted in various countries</li>
+            </ul>
+            
+            <p>Test dragging scenarios:</p>
+            <ul>
+                <li>Drag to all corners of the screen</li>
+                <li>Drag beyond viewport boundaries</li>
+                <li>Drag on pages with different heights</li>
+                <li>Drag on pages with fixed positioning elements</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Known Issues to Check:</h2>
+        <div class="note">
+            <ul>
+                <li>❌ Widget getting stretched when dragging</li>
+                <li>❌ Widget position reset incorrectly</li>
+                <li>❌ Refresh button wrapping to new line</li>
+                <li>❌ Country flag not showing</li>
+                <li>❌ Widget appearing in popup extension</li>
+                <li>❌ Layout conflicts with page content</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Sample Content for Testing Layout</h2>
+        <div class="test-content">
+            <p>This is sample content to test if the widget interferes with page layout.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+
+    <footer style="margin-top: 50px; text-align: center; color: #666;">
+        <p>🚀 Tenten Extension IP Widget Test - Version 2.2.0</p>
+    </footer>
+</body>
+</html>

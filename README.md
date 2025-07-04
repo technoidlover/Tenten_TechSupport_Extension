@@ -1,6 +1,6 @@
 # Runsystem Tenten DNS Automation
 
-Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT để trỏ domain Tenten về Ladipage + WHOIS Lookup + IP Widget.
+Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT để trỏ domain Tenten về Ladipage + WHOIS Lookup + **IP Widget v2.2.0**.
 
 ## Tính năng hiện tại
 
@@ -29,27 +29,25 @@ Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT đ�
 - **Giao diện trực quan**: Hiển thị thông tin dễ đọc với loading states
 - **Hoạt động độc lập**: Không cần truy cập domain.tenten.vn để sử dụng WHOIS
 
-### ✅ IP Widget (Mới - v2.2.0)
+### ✅ IP Widget v2.2.0 (Mới hoàn thành)
+- **Hiển thị IP và Server**: Widget nhỏ gọn ở góc dưới phải mọi trang web
+- **IPv4 Address**: Lấy IP thực của website từ DNS Google
+- **Country Flag**: Hiển thị cờ quốc gia của IP với hover tooltip
+- **Server Info**: Hiển thị thông tin server từ HTTP headers
+- **Draggable**: Kéo thả widget bằng cách click header
+- **Position Reset**: Double-click header để reset về vị trí ban đầu
+- **Compact Design**: Thiết kế nhỏ gọn, không cản trở nội dung trang
+- **Refresh Button**: Nút refresh gọn gàng trong header
+- **Fixed Layout Issues**: Không bị kéo dài đáy hay thừa khoảng trắng
+- **Viewport Constraints**: Widget luôn nằm trong màn hình
 
-- **Hiển thị thông tin IP real-time**: Widget hiển thị ở góc dưới bên phải **TẤT CẢ** các trang web
-- **Thông tin chi tiết**:
-  - Tên miền hiện tại
-  - Địa chỉ IPv4
-  - Địa chỉ IPv6 (nếu có)
-  - Thông tin server
-- **Tương tác người dùng**:
-  - Kéo thả widget đến vị trí tùy ý
-  - Thu gọn/mở rộng bằng nút toggle hoặc double-click
-  - Refresh thông tin bằng nút Refresh
-  - Phím tắt `Ctrl+Shift+I` để ẩn/hiện widget
-  - Tự động lưu vị trí và trạng thái
-- **Tự động hóa**:
-  - Tự động hiển thị trên mọi trang HTTP/HTTPS
-  - Tự động refresh khi chuyển tab
-  - Tự động detect domain change cho SPA
-  - Thông báo welcome khi lần đầu truy cập domain
-- **DNS Resolution**: Sử dụng Google DNS-over-HTTPS API
-- **Performance**: Tối ưu hóa với error handling và graceful degradation
+#### IP Widget Features:
+- 🌐 **Real IPv4 Detection**: Lấy IP thực từ DNS, không phải hostname
+- 🏳️ **Country Flag Display**: Emoji cờ quốc gia với tên nước khi hover
+- 🔄 **One-Click Refresh**: Cập nhật thông tin IP/server nhanh chóng
+- 🖱️ **Smooth Dragging**: Kéo thả mượt mà, không làm biến dạng layout
+- 📍 **Smart Positioning**: Tự động giữ widget trong viewport
+- 💡 **Clean UI**: Giao diện đẹp, professional, không ảnh hưởng trang web
 
 ### 🔄 Tính năng sắp tới
 - **Webhook Records**: Quản lý webhook DNS
