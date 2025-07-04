@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test IP Widget with Flag Images</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-info h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        .test-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .test-info code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .content h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        .content p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d1edff;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #0066cc;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h2>🧪 Test IP Widget with Flag Images</h2>
+        <p><strong>Purpose:</strong> Test the IP widget to ensure it displays flag images from the <code>flags/</code> directory instead of emoji flags.</p>
+        <p><strong>Expected behavior:</strong></p>
+        <ul>
+            <li>Widget appears in bottom-right corner</li>
+            <li>Shows IP address of current domain</li>
+            <li>Shows server information</li>
+            <li>Shows country flag as an IMAGE (not emoji)</li>
+            <li>Flag image should be 16x12 pixels with rounded corners</li>
+            <li>If flag not found, shows <code>_unknown.png</code></li>
+        </ul>
+        <p><strong>How to test:</strong></p>
+        <ol>
+            <li>Load this page in Chrome with the extension enabled</li>
+            <li>Check the widget in bottom-right corner</li>
+            <li>Verify the flag is displayed as an image</li>
+            <li>Open Developer Tools (F12) and check console for debug logs</li>
+            <li>Try refreshing the widget using the refresh button</li>
+        </ol>
+    </div>
+
+    <div class="content">
+        <h1>IP Widget Flag Test Page</h1>
+        
+        <p>This is a test page to verify the IP widget displays flag images correctly.</p>
+        
+        <p>The widget should appear in the bottom-right corner of the page with:</p>
+        <ul style="text-align: left; display: inline-block;">
+            <li>IP address of this domain</li>
+            <li>Server information</li>
+            <li>Country flag as an actual image (not emoji)</li>
+            <li>Refresh and close buttons</li>
+        </ul>
+        
+        <div class="highlight">
+            <strong>Note:</strong> The flag should be loaded from the <code>flags/</code> directory as a PNG image, 
+            not as an emoji character. Check the browser console for detailed debug information.
+        </div>
+        
+        <div class="success">
+            <strong>Success criteria:</strong> 
+            <ul style="text-align: left; display: inline-block;">
+                <li>✅ Widget visible in bottom-right</li>
+                <li>✅ IP address displayed</li>
+                <li>✅ Server info displayed</li>
+                <li>✅ Flag image displayed (16x12px)</li>
+                <li>✅ No console errors</li>
+            </ul>
+        </div>
+        
+        <p>If you see any issues, check the browser console for debug information.</p>
+    </div>
+
+    <script>
+        // Add some test logging
+        console.log('IP Widget Flag Test Page loaded');
+        console.log('Current domain:', window.location.hostname);
+        console.log('Current URL:', window.location.href);
+        
+        // Check if widget is injected
+        setTimeout(() => {
+            const widget = document.getElementById('tenten-ip-widget');
+            if (widget) {
+                console.log('✅ IP Widget found:', widget);
+                const flagImg = document.getElementById('tenten-flag');
+                if (flagImg) {
+                    console.log('✅ Flag image element found:', flagImg);
+                    console.log('Flag src:', flagImg.src);
+                    console.log('Flag display style:', flagImg.style.display);
+                } else {
+                    console.log('❌ Flag image element not found');
+                }
+            } else {
+                console.log('❌ IP Widget not found');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

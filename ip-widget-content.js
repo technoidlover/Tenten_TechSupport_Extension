@@ -93,9 +93,13 @@
 }
 #tenten-flag {
   margin-left: 8px !important; 
-  font-size: 16px !important;
+  width: 16px !important;
+  height: 12px !important;
   flex-shrink: 0 !important;
   display: inline-block !important;
+  object-fit: cover !important;
+  border-radius: 2px !important;
+  vertical-align: middle !important;
 }
 `;
     document.head.appendChild(style);
@@ -115,7 +119,7 @@
         <div class="tenten-ip-row">
           <span class="tenten-ip-label">IP:</span>
           <span class="tenten-ip-value" id="tenten-ipv4">...</span>
-          <span id="tenten-flag"></span>
+          <img id="tenten-flag" alt="Flag" style="display: none;">
         </div>
         <div class="tenten-ip-row">
           <span class="tenten-ip-label">Server:</span>
@@ -144,14 +148,17 @@
       // Reset to loading state
       ipEl.textContent = '...';
       serverEl.textContent = '...';
-      flagEl.textContent = '';
+      flagEl.style.display = 'none';
       flagEl.title = '';
       
       try {
         // Get IPv4 address
         const domain = window.location.hostname;
+        console.log('Looking up IP for domain:', domain);
+        
         const dnsResponse = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
         const dnsData = await dnsResponse.json();
+        console.log('DNS response:', dnsData);
         
         let ipv4 = null;
         if (dnsData.Answer && Array.isArray(dnsData.Answer)) {
@@ -159,32 +166,125 @@
             record.type === 1 && /^\d+\.\d+\.\d+\.\d+$/.test(record.data)
           );
           ipv4 = ipRecord ? ipRecord.data : null;
+          console.log('Found IPv4:', ipv4);
         }
         
         // Display IP
         ipEl.textContent = ipv4 || 'Not found';
+        console.log('IP displayed:', ipv4 || 'Not found');
         
         // Get country flag from IP
         if (ipv4 && /^\d+\.\d+\.\d+\.\d+$/.test(ipv4)) {
           try {
-            const geoResponse = await fetch(`https://ipapi.co/${ipv4}/json/`);
-            const geoData = await geoResponse.json();
+            console.log('Fetching geo info for IP:', ipv4);
             
-            if (geoData.country_code) {
-              const flag = countryCodeToFlag(geoData.country_code);
-              flagEl.textContent = flag;
-              flagEl.title = geoData.country_name || geoData.country_code;
+            // Try multiple geo APIs for better success rate
+            let geoData = null;
+            
+            // First try: ipapi.co (HTTPS, reliable)
+            try {
+              const response1 = await fetch(`https://ipapi.co/${ipv4}/json/`);
+              const data1 = await response1.json();
+              if (data1.country_code) {
+                geoData = { country_code: data1.country_code, country_name: data1.country_name };
+                console.log('Got geo data from ipapi.co:', geoData);
+              }
+            } catch (e) {
+              console.log('ipapi.co failed:', e);
             }
+            
+            // Second try: ipinfo.io (if first failed)
+            if (!geoData) {
+              try {
+                const response2 = await fetch(`https://ipinfo.io/${ipv4}/json`);
+                const data2 = await response2.json();
+                if (data2.country) {
+                  geoData = { country_code: data2.country, country_name: data2.country };
+                  console.log('Got geo data from ipinfo.io:', geoData);
+                }
+              } catch (e) {
+                console.log('ipinfo.io failed:', e);
+              }
+            }
+            
+            // Third try: ip-api.com (HTTP only, may be blocked on HTTPS sites)
+            if (!geoData) {
+              try {
+                const response3 = await fetch(`http://ip-api.com/json/${ipv4}`);
+                const data3 = await response3.json();
+                if (data3.status === 'success' && data3.countryCode) {
+                  geoData = { country_code: data3.countryCode, country_name: data3.country };
+                  console.log('Got geo data from ip-api.com:', geoData);
+                }
+              } catch (e) {
+                console.log('ip-api.com failed (likely blocked by HTTPS):', e);
+              }
+            }
+            
+            // Set flag image if we got data
+            if (geoData && geoData.country_code) {
+              const countryCode = geoData.country_code.toUpperCase();
+              console.log('Setting flag image for country:', countryCode);
+              
+              // Get extension URL for flag image
+              const flagUrl = chrome.runtime.getURL(`flags/${countryCode}.png`);
+              console.log('Flag URL:', flagUrl);
+              
+              flagEl.src = flagUrl;
+              flagEl.alt = `${countryCode} Flag`;
+              flagEl.title = geoData.country_name || countryCode;
+              flagEl.style.display = 'inline-block';
+              
+              // Handle image load error
+              flagEl.onerror = function() {
+                console.log('Flag image not found for:', countryCode);
+                // Try unknown flag as fallback
+                const unknownFlagUrl = chrome.runtime.getURL('flags/_unknown.png');
+                flagEl.src = unknownFlagUrl;
+                flagEl.alt = 'Unknown Flag';
+                flagEl.title = geoData.country_name || 'Unknown Country';
+              };
+              
+              flagEl.onload = function() {
+                console.log('Flag image loaded successfully for:', countryCode);
+              };
+              
+            } else {
+              console.log('No geo data found for IP:', ipv4);
+              // Set unknown flag
+              const unknownFlagUrl = chrome.runtime.getURL('flags/_unknown.png');
+              flagEl.src = unknownFlagUrl;
+              flagEl.alt = 'Unknown Flag';
+              flagEl.title = 'Unknown Country';
+              flagEl.style.display = 'inline-block';
+            }
+            
           } catch (geoError) {
-            console.log('Could not fetch geo info:', geoError);
+            console.error('All geo APIs failed:', geoError);
+            // Set unknown flag for error
+            const unknownFlagUrl = chrome.runtime.getURL('flags/_unknown.png');
+            flagEl.src = unknownFlagUrl;
+            flagEl.alt = 'Unknown Flag';
+            flagEl.title = 'Geo API Error';
+            flagEl.style.display = 'inline-block';
           }
+        } else {
+          console.log('Invalid IP for geo lookup:', ipv4);
+          // Set unknown flag for invalid IP
+          const unknownFlagUrl = chrome.runtime.getURL('flags/_unknown.png');
+          flagEl.src = unknownFlagUrl;
+          flagEl.alt = 'Unknown Flag';
+          flagEl.title = 'Invalid IP';
+          flagEl.style.display = 'inline-block';
         }
         
         // Get server info
         let serverInfo = 'Unknown';
         try {
+          console.log('Fetching server info for:', window.location.origin);
           const serverResponse = await fetch(window.location.origin, { method: 'HEAD' });
           const serverHeader = serverResponse.headers.get('Server');
+          console.log('Server header:', serverHeader);
           if (serverHeader) {
             serverInfo = serverHeader;
           }
@@ -193,22 +293,13 @@
         }
         
         serverEl.textContent = serverInfo;
+        console.log('Server displayed:', serverInfo);
         
       } catch (error) {
         console.error('Error updating IP info:', error);
         ipEl.textContent = 'Error';
         serverEl.textContent = 'Error';
       }
-    }
-    
-    // Convert country code to flag emoji
-    function countryCodeToFlag(countryCode) {
-      if (!countryCode || countryCode.length !== 2) return '';
-      const codePoints = countryCode
-        .toUpperCase()
-        .split('')
-        .map(char => 127397 + char.charCodeAt());
-      return String.fromCodePoint(...codePoints);
     }
     
     // Initialize

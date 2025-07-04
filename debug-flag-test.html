@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Country Flag Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; text-align: center; }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .flag-test {
+            font-size: 24px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .api-test {
+            background: #e8f4f8;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .debug-info {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .console-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🐛 Debug Country Flag Test</h1>
+        
+        <div class="debug-info">
+            <h2>Debug Instructions:</h2>
+            <ol>
+                <li>Open DevTools (F12) and go to Console tab</li>
+                <li>Load your extension in Chrome</li>
+                <li>Visit this page with extension active</li>
+                <li>Check console for debug logs</li>
+                <li>Run manual tests below</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Manual Flag Conversion Test</h2>
+            <div class="flag-test">
+                <strong>Test Country Codes:</strong><br>
+                <span id="flag-us">US: </span><span id="flag-us-result"></span><br>
+                <span id="flag-vn">VN: </span><span id="flag-vn-result"></span><br>
+                <span id="flag-jp">JP: </span><span id="flag-jp-result"></span><br>
+                <span id="flag-uk">GB: </span><span id="flag-uk-result"></span><br>
+                <span id="flag-de">DE: </span><span id="flag-de-result"></span><br>
+            </div>
+            <button onclick="testFlagConversion()">Test Flag Conversion</button>
+        </div>
+
+        <div class="test-section">
+            <h2>🌐 API Test</h2>
+            <div class="api-test">
+                <strong>Test IP:</strong> <input type="text" id="test-ip" value="8.8.8.8" placeholder="Enter IP address">
+                <button onclick="testGeoAPI()">Test Geo APIs</button>
+            </div>
+            <div id="api-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Current Website Test</h2>
+            <button onclick="testCurrentSite()">Test Current Site IP</button>
+            <div id="current-site-results"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 Console Output</h2>
+            <div id="console-output" class="console-output">
+                Console logs will appear here...
+            </div>
+            <button onclick="clearConsole()">Clear Console</button>
+        </div>
+    </div>
+
+    <script>
+        // Capture console logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const consoleOutput = document.getElementById('console-output');
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : '#4ecdc4';
+            consoleOutput.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+
+        // Test flag conversion
+        function countryCodeToFlag(countryCode) {
+            if (!countryCode || countryCode.length !== 2) {
+                console.log('Invalid country code:', countryCode);
+                return '🌍';
+            }
+            
+            try {
+                const codePoints = countryCode
+                    .toUpperCase()
+                    .split('')
+                    .map(char => 127397 + char.charCodeAt());
+                const flag = String.fromCodePoint(...codePoints);
+                console.log('Country code conversion:', countryCode, '→', codePoints, '→', flag);
+                return flag;
+            } catch (error) {
+                console.error('Error converting country code to flag:', error);
+                return '🌍';
+            }
+        }
+
+        function testFlagConversion() {
+            const testCodes = ['US', 'VN', 'JP', 'GB', 'DE'];
+            testCodes.forEach(code => {
+                const flag = countryCodeToFlag(code);
+                const element = document.getElementById(`flag-${code.toLowerCase()}-result`);
+                if (element) {
+                    element.textContent = flag;
+                } else {
+                    console.log('Element not found for:', code);
+                }
+            });
+        }
+
+        // Test geo APIs
+        async function testGeoAPI() {
+            const ip = document.getElementById('test-ip').value;
+            const resultsDiv = document.getElementById('api-results');
+            resultsDiv.innerHTML = '<p>Testing APIs...</p>';
+            
+            console.log('Testing geo APIs for IP:', ip);
+            
+            // Test ip-api.com
+            try {
+                const response1 = await fetch(`http://ip-api.com/json/${ip}`);
+                const data1 = await response1.json();
+                console.log('ip-api.com response:', data1);
+                
+                if (data1.status === 'success' && data1.countryCode) {
+                    const flag = countryCodeToFlag(data1.countryCode);
+                    resultsDiv.innerHTML += `<p><strong>ip-api.com:</strong> ${data1.country} (${data1.countryCode}) ${flag}</p>`;
+                } else {
+                    resultsDiv.innerHTML += '<p><strong>ip-api.com:</strong> Failed</p>';
+                }
+            } catch (e) {
+                console.error('ip-api.com error:', e);
+                resultsDiv.innerHTML += '<p><strong>ip-api.com:</strong> Error</p>';
+            }
+            
+            // Test ipapi.co
+            try {
+                const response2 = await fetch(`https://ipapi.co/${ip}/json/`);
+                const data2 = await response2.json();
+                console.log('ipapi.co response:', data2);
+                
+                if (data2.country_code) {
+                    const flag = countryCodeToFlag(data2.country_code);
+                    resultsDiv.innerHTML += `<p><strong>ipapi.co:</strong> ${data2.country_name} (${data2.country_code}) ${flag}</p>`;
+                } else {
+                    resultsDiv.innerHTML += '<p><strong>ipapi.co:</strong> Failed</p>';
+                }
+            } catch (e) {
+                console.error('ipapi.co error:', e);
+                resultsDiv.innerHTML += '<p><strong>ipapi.co:</strong> Error</p>';
+            }
+            
+            // Test ipinfo.io
+            try {
+                const response3 = await fetch(`https://ipinfo.io/${ip}/json`);
+                const data3 = await response3.json();
+                console.log('ipinfo.io response:', data3);
+                
+                if (data3.country) {
+                    const flag = countryCodeToFlag(data3.country);
+                    resultsDiv.innerHTML += `<p><strong>ipinfo.io:</strong> ${data3.country} ${flag}</p>`;
+                } else {
+                    resultsDiv.innerHTML += '<p><strong>ipinfo.io:</strong> Failed</p>';
+                }
+            } catch (e) {
+                console.error('ipinfo.io error:', e);
+                resultsDiv.innerHTML += '<p><strong>ipinfo.io:</strong> Error</p>';
+            }
+        }
+
+        // Test current site
+        async function testCurrentSite() {
+            const resultsDiv = document.getElementById('current-site-results');
+            resultsDiv.innerHTML = '<p>Testing current site...</p>';
+            
+            const domain = window.location.hostname;
+            console.log('Testing current site:', domain);
+            
+            try {
+                const dnsResponse = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
+                const dnsData = await dnsResponse.json();
+                console.log('DNS response for current site:', dnsData);
+                
+                if (dnsData.Answer && Array.isArray(dnsData.Answer)) {
+                    const ipRecord = dnsData.Answer.find(record => 
+                        record.type === 1 && /^\d+\.\d+\.\d+\.\d+$/.test(record.data)
+                    );
+                    const ipv4 = ipRecord ? ipRecord.data : null;
+                    
+                    if (ipv4) {
+                        resultsDiv.innerHTML += `<p><strong>Current site IP:</strong> ${ipv4}</p>`;
+                        
+                        // Test geo for this IP
+                        document.getElementById('test-ip').value = ipv4;
+                        await testGeoAPI();
+                    } else {
+                        resultsDiv.innerHTML += '<p><strong>Current site:</strong> No IPv4 found</p>';
+                    }
+                } else {
+                    resultsDiv.innerHTML += '<p><strong>Current site:</strong> DNS lookup failed</p>';
+                }
+            } catch (error) {
+                console.error('Current site test error:', error);
+                resultsDiv.innerHTML += '<p><strong>Current site:</strong> Error</p>';
+            }
+        }
+
+        function clearConsole() {
+            consoleOutput.innerHTML = 'Console cleared...\n';
+        }
+
+        // Auto-run flag test on load
+        window.onload = function() {
+            console.log('Debug page loaded');
+            testFlagConversion();
+        };
+    </script>
+</body>
+</html>
