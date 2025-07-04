@@ -1,44 +1,57 @@
-// Main Popup Script - Refactored with modular components
+// Main Popup Script - Cleaned version without Ladipage DNS Automation
 // This is the main entry point that coordinates all functionality modules
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('=== Popup Script Loading ===');
+    console.log('DOM Content Loaded event fired');
+    console.log('Document readyState:', document.readyState);
+    
+    // Test basic DOM access
+    const testElement = document.getElementById('whoisLookup');
+    console.log('Test element (whoisLookup):', testElement);
     
     // Get all DOM elements
+    console.log('Getting DOM elements...');
     const elements = {
-        // Input elements
-        domainInput: document.getElementById('domainInput'),
-        
         // Status elements
         statusIndicator: document.getElementById('statusIndicator'),
         statusText: document.getElementById('statusText'),
         
-        // Menu buttons
-        dnsAutomationBtn: document.getElementById('dnsAutomation'),
+        // Menu buttons (Ladipage elements removed)
         whoisLookupBtn: document.getElementById('whoisLookup'),
         ipInfoBtn: document.getElementById('ipInfo'),
         dnsRecordsBtn: document.getElementById('dnsRecords'),
+        autoLadipage: document.getElementById('autoLadipage'),
         helpLink: document.getElementById('helpLink'),
-        stopButton: document.getElementById('stopButton'),
-        
-        // Progress and log elements
-        progressSection: document.getElementById('progressSection'),
-        progressFill: document.getElementById('progressFill'),
-        progressText: document.getElementById('progressText'),
-        logSection: document.getElementById('logSection'),
-        logContainer: document.getElementById('logContainer'),
         
         // Content sections
         whoisSection: document.getElementById('whoisSection'),
         whoisContainer: document.getElementById('whoisContainer'),
+        whoisDomainInput: document.getElementById('whoisDomainInput'),
+        whoisSubmitBtn: document.getElementById('whoisSubmitBtn'),
+        
         ipInfoSection: document.getElementById('ipInfoSection'),
         ipInfoContainer: document.getElementById('ipInfoContainer'),
+        ipinfoDomainInput: document.getElementById('ipinfoDomainInput'),
+        ipinfoSubmitBtn: document.getElementById('ipinfoSubmitBtn'),
+        
         dnsSection: document.getElementById('dnsSection'),
         dnsContainer: document.getElementById('dnsContainer'),
+        dnsDomainInput: document.getElementById('dnsDomainInput'),
+        dnsSubmitBtn: document.getElementById('dnsSubmitBtn'),
+        
+        // Ladipage elements
+        ladipageSection: document.getElementById('ladipageSection'),
+        ladipageContainer: document.getElementById('ladipageContainer'),
+        ladipageDomainInput: document.getElementById('ladipageDomainInput'),
+        ladipageSubmitBtn: document.getElementById('ladipageSubmitBtn'),
+        ladipageProgress: document.getElementById('ladipageProgress'),
+        ladipageProgressFill: document.getElementById('ladipageProgressFill'),
+        ladipageProgressText: document.getElementById('ladipageProgressText'),
+        ladipageStopBtn: document.getElementById('ladipageStopBtn'),
         
         // DNS specific elements
         recordTypeSelect: document.getElementById('recordType'),
-        lookupDnsBtn: document.getElementById('lookupDnsBtn'),
         
         // Right panel elements
         rightPanel: document.getElementById('rightPanel'),
@@ -51,94 +64,162 @@ document.addEventListener('DOMContentLoaded', function() {
         menuSection: document.querySelector('.menu-section')
     };
 
+    // Debug: Check if all essential elements are found
+    console.log('=== Elements Check ===');
+    const missingElements = [];
+    
+    // Check critical elements for handlers (Ladipage elements removed)
+    const criticalElements = [
+        'whoisContainer', 'whoisDomainInput', 'whoisSubmitBtn',
+        'ipInfoContainer', 'ipinfoDomainInput', 'ipinfoSubmitBtn',
+        'dnsContainer', 'dnsDomainInput', 'dnsSubmitBtn',
+        'ladipageContainer', 'ladipageDomainInput', 'ladipageSubmitBtn',
+        'rightPanel', 'rightPanelTitle', 'rightPanelContent',
+        'recordTypeSelect', 'whoisSection', 'ipInfoSection', 'dnsSection', 'ladipageSection',
+        'whoisLookupBtn', 'ipInfoBtn', 'dnsRecordsBtn', 'autoLadipage'
+    ];
+    
+    criticalElements.forEach(key => {
+        if (!elements[key]) {
+            missingElements.push(key);
+            console.error(`Missing element: ${key}`);
+        } else {
+            console.log(`✓ Found element: ${key}`);
+        }
+    });
+    
+    if (missingElements.length > 0) {
+        console.error('Missing elements detected:', missingElements);
+    } else {
+        console.log('✅ All critical elements found');
+    }
+
     // Initialize UI Manager
-    window.uiManager = new UIManager(elements);
+    try {
+        window.uiManager = new UIManager(elements);
+        console.log('✓ UIManager initialized successfully');
+    } catch (error) {
+        console.error('✗ Failed to initialize UIManager:', error);
+    }
     
-    // Initialize handlers
-    const whoisHandler = new WhoisHandler(elements);
-    const ipInfoHandler = new IpInfoHandler(elements);
-    const dnsRecordsHandler = new DnsRecordsHandler(elements);
+    // Initialize handlers - Make them global for access
+    console.log('Initializing handlers...');
+    console.log('Handler availability check:', {
+        WhoisHandler: typeof WhoisHandler,
+        IpInfoHandler: typeof IpInfoHandler,
+        DnsRecordsHandler: typeof DnsRecordsHandler,
+        LadipageHandler: typeof LadipageHandler,
+        UIManager: typeof UIManager,
+        DomainUtils: typeof DomainUtils
+    });
     
-    // Global variable để track automation
-    let currentTabId = null;
+    try {
+        if (typeof WhoisHandler !== 'undefined') {
+            window.whoisHandler = new WhoisHandler(elements);
+            console.log('✓ WhoisHandler initialized successfully');
+        } else {
+            console.error('✗ WhoisHandler class not found');
+        }
+    } catch (error) {
+        console.error('✗ Failed to initialize WhoisHandler:', error);
+    }
+    
+    try {
+        if (typeof IpInfoHandler !== 'undefined') {
+            window.ipInfoHandler = new IpInfoHandler(elements);
+            console.log('✓ IpInfoHandler initialized successfully');
+        } else {
+            console.error('✗ IpInfoHandler class not found');
+        }
+    } catch (error) {
+        console.error('✗ Failed to initialize IpInfoHandler:', error);
+    }
+    
+    try {
+        if (typeof DnsRecordsHandler !== 'undefined') {
+            window.dnsRecordsHandler = new DnsRecordsHandler(elements);
+            console.log('✓ DnsRecordsHandler initialized successfully');
+        } else {
+            console.error('✗ DnsRecordsHandler class not found - will create dummy');
+            window.dnsRecordsHandler = {
+                handlePanelOpen: function() { console.log('Dummy DNS handler'); },
+                handleLookup: function() { console.log('Dummy DNS lookup'); }
+            };
+        }
+    } catch (error) {
+        console.error('✗ Failed to initialize DnsRecordsHandler:', error);
+        window.dnsRecordsHandler = {
+            handlePanelOpen: function() { console.log('Dummy DNS handler'); },
+            handleLookup: function() { console.log('Dummy DNS lookup'); }
+        };
+    }
+    
+    try {
+        if (typeof LadipageHandler !== 'undefined') {
+            window.ladipageHandler = new LadipageHandler(elements);
+            console.log('✓ LadipageHandler initialized successfully');
+        } else {
+            console.error('✗ LadipageHandler class not found');
+        }
+    } catch (error) {
+        console.error('✗ Failed to initialize LadipageHandler:', error);
+    }
 
     // Initialize application
     init();
+    
+    // Setup message listener for content script communication
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        console.log('Popup received message:', message);
+        
+        // Forward message to appropriate handler
+        if (window.ladipageHandler && window.ladipageHandler.handleMessage) {
+            window.ladipageHandler.handleMessage(message);
+        }
+        
+        // Always return true to keep message channel open
+        return true;
+    });
 
     async function init() {
-        console.log('=== Initializing Popup v1.6.2 ===');
+        console.log('=== Initializing Popup v2.0.0 (No Ladipage) ===');
         
-        // Load saved domain
-        await loadSavedDomain();
-        
-        // Check Tenten page status IMMEDIATELY when popup opens
-        console.log('🚀 Immediate Tenten status check on popup open...');
-        await checkTentenPageStatus();
-        
-        // Set initial states
-        setInitialStates();
-        
-        // Setup event listeners
-        setupEventListeners();
-        
-        // Initialize UI features
-        window.uiManager.initializeScrolling();
-        
-        // Setup tab listener for future updates
-        setupTabListener();
-        
-        console.log('=== Popup Initialized v1.6.5 ALWAYS READY ===');
-    }
-
-    function setupTabListener() {
-        console.log('Setting up ULTRA INSTANT tab listeners v1.6.4 - ZERO DELAYS...');
-        
-        // Listen for tab updates - INSTANT CHECK (no conditions)
-        chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-            console.log('Tab updated event:', { tabId, status: changeInfo.status, url: tab.url });
-            // Check IMMEDIATELY for any tab update - zero delay, no status filtering
-            checkTentenPageStatus();
-        });
-
-        // Listen for tab activation - INSTANT CHECK
-        chrome.tabs.onActivated.addListener((activeInfo) => {
-            console.log('Tab activated event:', activeInfo.tabId);
-            // IMMEDIATE check when tab activated - absolute zero delay
-            checkTentenPageStatus();
-        });
-        
-        // Window focus detection - INSTANT CHECK
-        chrome.windows.onFocusChanged.addListener((windowId) => {
-            if (windowId !== chrome.windows.WINDOW_ID_NONE) {
-                console.log('Window focused - instant check');
-                checkTentenPageStatus();
+        try {
+            // Load saved domain
+            await loadSavedDomain();
+            
+            // Set initial states
+            setInitialStates();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initialize UI features
+            if (window.uiManager && typeof window.uiManager.initializeScrolling === 'function') {
+                window.uiManager.initializeScrolling();
+            } else {
+                console.warn('UIManager scrolling initialization skipped');
             }
-        });
-        
-        // Popup visibility change - INSTANT CHECK
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                console.log('Popup visible - instant check');
-                checkTentenPageStatus();
-            }
-        });
-
-        // Page navigation detection via beforeunload
-        chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-            if (changeInfo.url) {
-                console.log('URL changed - instant check');
-                checkTentenPageStatus();
-            }
-        });
-        
-        console.log('✅ ULTRA INSTANT listeners v1.6.4 setup complete');
+            
+            console.log('=== Popup Initialized v2.0.0 - Clean Version ===');
+        } catch (error) {
+            console.error('Error during initialization:', error);
+        }
     }
 
     async function loadSavedDomain() {
         try {
+            if (typeof DomainUtils === 'undefined') {
+                console.warn('DomainUtils not available, skipping saved domain load');
+                return;
+            }
+            
             const savedDomain = await DomainUtils.loadSavedDomain();
             if (savedDomain) {
-                elements.domainInput.value = savedDomain;
+                // Load saved domain into all domain inputs
+                if (elements.whoisDomainInput) elements.whoisDomainInput.value = savedDomain;
+                if (elements.ipinfoDomainInput) elements.ipinfoDomainInput.value = savedDomain;
+                if (elements.dnsDomainInput) elements.dnsDomainInput.value = savedDomain;
                 console.log('Loaded saved domain:', savedDomain);
             }
         } catch (error) {
@@ -147,349 +228,311 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setInitialStates() {
-        // DNS Automation - ALWAYS ENABLED v1.6.5
-        elements.dnsAutomationBtn.classList.remove('disabled');
-        elements.dnsAutomationBtn.style.pointerEvents = 'auto';
-        elements.dnsAutomationBtn.style.opacity = '1';
-        elements.dnsAutomationBtn.style.cursor = 'pointer';
-        const dnsStatus = elements.dnsAutomationBtn.querySelector('.menu-status');
-        if (dnsStatus) {
-            dnsStatus.textContent = 'READY';
-            dnsStatus.className = 'menu-status ready';
+        // Enable ready features with error handling
+        if (elements.whoisLookupBtn) {
+            elements.whoisLookupBtn.classList.remove('disabled');
+            elements.whoisLookupBtn.style.pointerEvents = 'auto';
         }
         
-        // Enable ready features
-        elements.whoisLookupBtn.classList.remove('disabled');
-        elements.whoisLookupBtn.style.pointerEvents = 'auto';
+        if (elements.ipInfoBtn) {
+            elements.ipInfoBtn.classList.remove('disabled');
+            elements.ipInfoBtn.style.pointerEvents = 'auto';
+        }
         
-        elements.ipInfoBtn.classList.remove('disabled');
-        elements.ipInfoBtn.style.pointerEvents = 'auto';
+        if (elements.dnsRecordsBtn) {
+            elements.dnsRecordsBtn.classList.remove('disabled');
+            elements.dnsRecordsBtn.style.pointerEvents = 'auto';
+        }
         
-        elements.dnsRecordsBtn.classList.remove('disabled');
-        elements.dnsRecordsBtn.style.pointerEvents = 'auto';
+        console.log('Initial states set for all buttons');
     }
 
     function setupEventListeners() {
-        // Domain input with debounced save
-        const debouncedSave = DomainUtils.debounce((domain) => {
-            DomainUtils.saveDomain(domain);
-        }, 500);
+        console.log('=== Setting up Event Listeners ===');
         
-        elements.domainInput.addEventListener('input', (e) => {
-            debouncedSave(e.target.value);
-        });
-        
-        // Menu button event listeners
-        elements.dnsAutomationBtn.addEventListener('click', handleDnsAutomation);
-        elements.whoisLookupBtn.addEventListener('click', () => whoisHandler.handleLookup());
-        elements.ipInfoBtn.addEventListener('click', () => ipInfoHandler.handleLookup());
-        elements.dnsRecordsBtn.addEventListener('click', () => dnsRecordsHandler.handlePanelOpen());
-        elements.lookupDnsBtn.addEventListener('click', () => dnsRecordsHandler.handleLookup());
-        
-        // UI event listeners
-        elements.helpLink.addEventListener('click', showHelp);
-        elements.closePanelBtn.addEventListener('click', () => window.uiManager.closeRightPanel());
-        
-        // Global stop function
-        window.stopAutomation = stopAutomation;
-        
-        console.log('Event listeners setup complete');
-    }
-
-    // Tenten-specific functionality - INSTANT CHECK v1.6.4
-    async function checkTentenPageStatus() {
-        try {
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-            
-            console.log('=== DNS Always Ready v1.6.5 ===');
-            console.log('Tab URL:', tab.url);
-            console.log('DNS Button: ALWAYS ENABLED');
-            
-            // Ultra-fast check: just check URL contains domain.tenten.vn
-            const isOnTentenDomain = tab.url && tab.url.includes('domain.tenten.vn');
-            
-            console.log('On Tenten domain:', isOnTentenDomain);
-            
-            if (isOnTentenDomain) {
-                console.log('🟢 INSTANT: Tenten domain detected - enabling DNS NOW');
-                window.uiManager.updateStatus(true, 'Sẵn sàng DNS Automation');
-                
-                // Enable DNS Automation INSTANTLY - Force Mode v1.6.4
-                forceEnableDnsButton();
-                
-                const dnsStatus = elements.dnsAutomationBtn.querySelector('.menu-status');
-                if (dnsStatus) {
-                    dnsStatus.textContent = 'READY';
-                    dnsStatus.className = 'menu-status ready';
-                }
-                
-                console.log('� DNS Button enabled INSTANTLY - NO DELAY');
-                
-            } else {
-                console.log('� Not on Tenten - but DNS still enabled');
-                window.uiManager.updateStatus(true, 'DNS luôn sẵn sàng');
-                
-                // Keep DNS Automation enabled - v1.6.5 Always Ready
-                forceEnableDnsButton();
-                
-                const dnsStatus = elements.dnsAutomationBtn.querySelector('.menu-status');
-                if (dnsStatus) {
-                    dnsStatus.textContent = 'READY';
-                    dnsStatus.className = 'menu-status ready';
-                }
-                
-                console.log('✅ DNS Button always enabled - any page');
-            }
-        } catch (error) {
-            console.error('Error checking status:', error);
-            
-            // Keep DNS button enabled even on error - v1.6.5
-            forceEnableDnsButton();
-            window.uiManager.updateStatus(true, 'DNS luôn sẵn sàng');
-        }
-    }
-
-    async function handleDnsAutomation() {
-        const domain = elements.domainInput.value.trim();
-        
-        if (!domain) {
-            window.uiManager.showError('Vui lòng nhập tên miền');
+        // Check all critical elements before setting up listeners
+        if (!elements.whoisSubmitBtn || !elements.ipinfoSubmitBtn || !elements.dnsSubmitBtn) {
+            console.error('❌ Critical submit buttons missing:', {
+                whoisSubmitBtn: !!elements.whoisSubmitBtn,
+                ipinfoSubmitBtn: !!elements.ipinfoSubmitBtn,
+                dnsSubmitBtn: !!elements.dnsSubmitBtn
+            });
             return;
         }
-
-        console.log('=== DNS Automation Ladipage Started v1.6.2 ===');
-        console.log('Domain:', domain);
-        console.log('Version: 1.6.2 - Fast Response & Auto Refresh');
-
+        
+        // Main menu items - direct panel navigation
+        if (elements.whoisLookupBtn) {
+            console.log('✓ WHOIS button found, adding event listener');
+            elements.whoisLookupBtn.addEventListener('click', () => {
+                console.log('WHOIS button clicked!');
+                showWhoisPanel();
+            });
+        } else {
+            console.error('✗ WHOIS button NOT found');
+        }
+        
+        if (elements.ipInfoBtn) {
+            console.log('✓ IP Info button found, adding event listener');
+            elements.ipInfoBtn.addEventListener('click', () => {
+                console.log('IP Info button clicked!');
+                showIpInfoPanel();
+            });
+        } else {
+            console.error('✗ IP Info button NOT found');
+        }
+        
+        if (elements.dnsRecordsBtn) {
+            console.log('✓ DNS Records button found, adding event listener');
+            elements.dnsRecordsBtn.addEventListener('click', () => {
+                console.log('DNS Records button clicked!');
+                showDnsRecordsPanel();
+            });
+        } else {
+            console.error('✗ DNS Records button NOT found');
+        }
+        
+        // Domain input submit buttons with error handling
         try {
-            // Get current tab and verify it's the correct page
-            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-            currentTabId = tab.id;
-            
-            console.log('Current tab:', {
-                id: tab.id,
-                url: tab.url
-            });
-
-            // Simplified verification - only check URL (no title check for speed)
-            const isOnTentenDomain = tab.url && tab.url.includes('domain.tenten.vn');
-            
-            if (!isOnTentenDomain) {
-                window.uiManager.showError('Vui lòng mở trang domain.tenten.vn trước');
-                return;
-            }
-
-            // Show progress and logs
-            window.uiManager.setProgress(5, 'Bắt đầu DNS Automation Ladipage...');
-            window.uiManager.clearLogs();
-            window.uiManager.addLog('🚀 Bắt đầu DNS Automation Ladipage cho: ' + domain, 'info');
-            window.uiManager.addLog('📋 Tab ID: ' + currentTabId, 'info');
-            window.uiManager.addLog('🌐 URL: ' + tab.url, 'info');
-            
-            // Enable stop button
-            elements.stopButton.style.display = 'inline-block';
-
-            // Test content script connection first
-            window.uiManager.setProgress(10, 'Kiểm tra kết nối với content script...');
-            window.uiManager.addLog('🔌 Kiểm tra kết nối với content script...', 'info');
-            
-            // Send ping message first to test connection
-            chrome.tabs.sendMessage(currentTabId, {
-                action: 'ping'
-            }, (response) => {
-                if (chrome.runtime.lastError) {
-                    console.error('Content script connection failed:', chrome.runtime.lastError);
-                    window.uiManager.addLog('❌ Không thể kết nối với content script', 'error');
-                    window.uiManager.addLog('💡 Hãy thử refresh trang và thử lại', 'warning');
-                    window.uiManager.showError('Lỗi kết nối content script - Refresh trang và thử lại');
-                    window.uiManager.hideProgress();
-                    elements.stopButton.style.display = 'none';
-                    return;
+            elements.whoisSubmitBtn.addEventListener('click', () => {
+                const domain = elements.whoisDomainInput.value.trim();
+                console.log('WHOIS submit clicked with domain:', domain);
+                if (domain) {
+                    if (window.whoisHandler) {
+                        window.whoisHandler.handleLookup(domain);
+                    } else {
+                        console.error('WhoisHandler not available');
+                    }
+                } else {
+                    console.warn('No domain entered for WHOIS lookup');
                 }
-                
-                console.log('Content script connected:', response);
-                window.uiManager.addLog('✅ Kết nối content script thành công', 'success');
-                
-                // Now send the actual automation command
-                setTimeout(() => {
-                    startActualAutomation(domain);
-                }, 500);
             });
-
         } catch (error) {
-            console.error('DNS Automation error:', error);
-            window.uiManager.showError('Lỗi: ' + error.message);
-            window.uiManager.hideProgress();
-            elements.stopButton.style.display = 'none';
+            console.error('Error setting up WHOIS submit listener:', error);
         }
-    }
-    
-    function startActualAutomation(domain) {
-        console.log('=== Starting Actual Automation ===');
-        window.uiManager.setProgress(15, 'Bắt đầu automation...');
-        window.uiManager.addLog('⚡ Bắt đầu thực hiện automation...', 'info');
         
-        // Send message to content script with correct action name
-        const cleanDomain = DomainUtils.cleanDomainName(domain);
-        chrome.tabs.sendMessage(currentTabId, {
-            action: 'startDnsAutomation',  // Fixed: match content script listener
-            domain: cleanDomain
-        }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.error('Error sending automation message:', chrome.runtime.lastError);
-                window.uiManager.addLog('❌ Lỗi gửi lệnh automation: ' + chrome.runtime.lastError.message, 'error');
-                window.uiManager.showError('Lỗi gửi lệnh automation');
-                window.uiManager.hideProgress();
-                elements.stopButton.style.display = 'none';
-            } else {
-                console.log('Automation message sent successfully:', response);
-                window.uiManager.addLog('📤 Lệnh automation đã được gửi', 'success');
-                if (response && response.success === false) {
-                    window.uiManager.addLog('❌ Content script error: ' + response.error, 'error');
-                    window.uiManager.showError('Lỗi từ content script: ' + response.error);
-                    window.uiManager.hideProgress();
-                    elements.stopButton.style.display = 'none';
+        try {
+            elements.ipinfoSubmitBtn.addEventListener('click', () => {
+                const domain = elements.ipinfoDomainInput.value.trim();
+                console.log('IP Info submit clicked with domain:', domain);
+                if (domain) {
+                    if (window.ipInfoHandler) {
+                        window.ipInfoHandler.handleLookup(domain);
+                    } else {
+                        console.error('IpInfoHandler not available');
+                    }
+                } else {
+                    console.warn('No domain entered for IP Info lookup');
                 }
-            }
-        });
-    }
-
-    function stopAutomation() {
-        console.log('=== Stopping Automation ===');
+            });
+        } catch (error) {
+            console.error('Error setting up IP Info submit listener:', error);
+        }
         
-        if (currentTabId) {
-            chrome.tabs.sendMessage(currentTabId, {
-                action: 'stopAutomation'
-            }, (response) => {
-                console.log('Stop message sent:', response);
+        try {
+            elements.dnsSubmitBtn.addEventListener('click', () => {
+                const domain = elements.dnsDomainInput.value.trim();
+                console.log('DNS submit clicked with domain:', domain);
+                if (domain) {
+                    if (window.dnsRecordsHandler) {
+                        window.dnsRecordsHandler.handleLookup(domain);
+                    } else {
+                        console.error('DnsRecordsHandler not available');
+                    }
+                } else {
+                    console.warn('No domain entered for DNS lookup');
+                }
+            });
+        } catch (error) {
+            console.error('Error setting up DNS submit listener:', error);
+        }
+        
+        // Enter key support for inputs with error handling
+        if (elements.whoisDomainInput) {
+            elements.whoisDomainInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    elements.whoisSubmitBtn.click();
+                }
             });
         }
         
-        window.uiManager.addLog('⛔ Automation đã được dừng bởi người dùng', 'warning');
-        window.uiManager.hideProgress();
-        elements.stopButton.style.display = 'none';
-        currentTabId = null;
+        if (elements.ipinfoDomainInput) {
+            elements.ipinfoDomainInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    elements.ipinfoSubmitBtn.click();
+                }
+            });
+        }
+        
+        if (elements.dnsDomainInput) {
+            elements.dnsDomainInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    elements.dnsSubmitBtn.click();
+                }
+            });
+        }
+        
+        // UI event listeners
+        if (elements.helpLink) {
+            elements.helpLink.addEventListener('click', showHelp);
+        }
+        
+        if (elements.closePanelBtn) {
+            elements.closePanelBtn.addEventListener('click', () => {
+                if (window.uiManager) {
+                    window.uiManager.closeRightPanel();
+                } else {
+                    console.error('UIManager not available');
+                }
+            });
+        }
+        
+        console.log('Event listeners setup complete');
     }
 
     function showHelp() {
         console.log('=== Showing Help ===');
         
-        window.uiManager.clearLogs();
-        window.uiManager.addLog('=== HƯỚNG DẪN SỬ DỤNG ===', 'info');
-        window.uiManager.addLog('--- DNS AUTOMATION ---', 'info');
-        window.uiManager.addLog('1. Truy cập domain.tenten.vn và đăng nhập', 'info');
-        window.uiManager.addLog('2. Vào trang DNS Settings của domain', 'info');
-        window.uiManager.addLog('3. Nhập tên miền và click DNS Automation', 'info');
-        window.uiManager.addLog('4. Extension sẽ tự động tạo CNAME và REDIRECT trong ~30s', 'info');
-        window.uiManager.addLog('5. Trang sẽ tự động reload sau 1 giây khi hoàn thành', 'info');
-        window.uiManager.addLog('--- WHOIS LOOKUP ---', 'info');
-        window.uiManager.addLog('1. Nhập tên miền cần tra cứu', 'info');
-        window.uiManager.addLog('2. Click WHOIS Lookup để xem thông tin đăng ký', 'info');
-        window.uiManager.addLog('3. Thông tin bao gồm: ngày đăng ký, hết hạn, chủ sở hữu, etc.', 'info');
-        window.uiManager.addLog('--- IP/DOMAIN INFO ---', 'info');
-        window.uiManager.addLog('1. Nhập tên miền hoặc IP cần tra cứu', 'info');
-        window.uiManager.addLog('2. Click IP/Domain Info để xem thông tin địa lý', 'info');
-        window.uiManager.addLog('3. Thông tin bao gồm: ISP, quốc gia, thành phố, timezone, etc.', 'info');
-        window.uiManager.addLog('--- DNS RECORDS ---', 'info');
-        window.uiManager.addLog('1. Nhập tên miền cần tra cứu', 'info');
-        window.uiManager.addLog('2. Click DNS Records để mở panel', 'info');
-        window.uiManager.addLog('3. Chọn loại bản ghi (A, AAAA, CNAME, MX, etc.)', 'info');
-        window.uiManager.addLog('4. Click "Tra cứu" để xem kết quả', 'info');
-        window.uiManager.addLog('5. Hỗ trợ 12 loại bản ghi DNS phổ biến', 'info');
-    }
-
-    // Force enable DNS button function - v1.6.4 fix
-    function forceEnableDnsButton() {
-        console.log('=== FORCE ENABLE DNS BUTTON v1.6.4 ===');
-        
-        // Remove ALL possible blocking
-        elements.dnsAutomationBtn.classList.remove('disabled');
-        elements.dnsAutomationBtn.removeAttribute('disabled');
-        elements.dnsAutomationBtn.style.pointerEvents = 'auto';
-        elements.dnsAutomationBtn.style.opacity = '1';
-        elements.dnsAutomationBtn.style.filter = 'none';
-        elements.dnsAutomationBtn.style.cursor = 'pointer';
-        elements.dnsAutomationBtn.style.background = '';
-        elements.dnsAutomationBtn.disabled = false;
-        
-        // Check computed styles for debugging
-        const computedStyle = window.getComputedStyle(elements.dnsAutomationBtn);
-        console.log('=== DNS Button State Check ===');
-        console.log('Has disabled class:', elements.dnsAutomationBtn.classList.contains('disabled'));
-        console.log('Style pointer-events:', elements.dnsAutomationBtn.style.pointerEvents);
-        console.log('Style opacity:', elements.dnsAutomationBtn.style.opacity);
-        console.log('Computed pointer-events:', computedStyle.pointerEvents);
-        console.log('Computed opacity:', computedStyle.opacity);
-        
-        console.log('✅ Force enable complete - button should be clickable now');
-    }
-
-    // Listen for messages from content script
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        console.log('Popup received message:', message);
-        
-        if (message.action === 'updateProgress') {
-            window.uiManager.setProgress(message.progress, message.text);
-        } else if (message.action === 'addLog') {
-            window.uiManager.addLog(message.message, message.type || 'info');
-        } else if (message.action === 'automationComplete') {
-            window.uiManager.addLog('✅ DNS Automation Ladipage hoàn thành thành công!', 'success');
-            window.uiManager.addLog('🎯 Domain của bạn bây giờ đã trỏ về Ladipage!', 'success');
-            window.uiManager.setProgress(100, 'Hoàn thành - Sẽ tự động refresh sau 3 giây');
-            elements.stopButton.style.display = 'none';
-            
-            // Auto refresh after 3 seconds
-            let countdown = 3;
-            window.uiManager.addLog(`🔄 Tự động refresh trang sau ${countdown} giây...`, 'info');
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                if (countdown > 0) {
-                    window.uiManager.setProgress(100, `Hoàn thành - Sẽ tự động refresh sau ${countdown} giây`);
-                    // Update last log with countdown
-                    const logs = document.querySelectorAll('.log-entry');
-                    if (logs.length > 0) {
-                        const lastLog = logs[logs.length - 1];
-                        if (lastLog.textContent.includes('Tự động refresh')) {
-                            lastLog.textContent = `🔄 Tự động refresh trang sau ${countdown} giây...`;
-                        }
-                    }
-                } else {
-                    clearInterval(countdownInterval);
-                    window.uiManager.addLog('🔄 Đang refresh trang...', 'info');
-                    
-                    // Refresh the tab
-                    if (currentTabId) {
-                        chrome.tabs.reload(currentTabId, () => {
-                            console.log('Tab refreshed successfully');
-                            window.uiManager.addLog('✅ Trang đã được refresh!', 'success');
-                            
-                            // Hide progress after refresh
-                            setTimeout(() => {
-                                window.uiManager.hideProgress();
-                                // Re-check status after refresh
-                                setTimeout(checkTentenPageStatus, 1000);
-                            }, 1000);
-                        });
-                    }
-                }
-            }, 1000);
-            
-            // Show success notification
-            window.uiManager.showSuccess('DNS Automation Ladipage hoàn thành!');
-        } else if (message.action === 'automationError') {
-            window.uiManager.addLog(`❌ Lỗi: ${message.error}`, 'error');
-            window.uiManager.hideProgress();
-            elements.stopButton.style.display = 'none';
-            window.uiManager.showError('Automation thất bại: ' + message.error);
+        // Check if uiManager is available
+        if (!window.uiManager) {
+            console.error('UIManager not available for showHelp');
+            return;
         }
         
-        sendResponse({ received: true });
-    });
+        // Show help in right panel
+        window.uiManager.showRightPanel('📖 Hướng dẫn sử dụng', 'help');
+        
+        // Get right panel content element
+        const rightPanelContent = document.getElementById('rightPanelContent');
+        if (rightPanelContent) {
+            rightPanelContent.innerHTML = `
+                <div class="help-container">
+                    <h3>📖 Hướng dẫn sử dụng</h3>
+                    
+                    <div class="help-section">
+                        <h4>🔍 WHOIS Lookup</h4>
+                        <ol>
+                            <li>Click "WHOIS Lookup"</li>
+                            <li>Nhập tên miền cần tra cứu</li>
+                            <li>Xem thông tin đăng ký: ngày đăng ký, hết hạn, chủ sở hữu</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>📍 IP/Domain Info</h4>
+                        <ol>
+                            <li>Click "IP/Domain Info"</li>
+                            <li>Nhập tên miền hoặc IP cần tra cứu</li>
+                            <li>Xem thông tin địa lý: ISP, quốc gia, thành phố, timezone</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>🌐 DNS Records</h4>
+                        <ol>
+                            <li>Click "DNS Records"</li>
+                            <li>Nhập tên miền cần tra cứu</li>
+                            <li>Chọn loại bản ghi (A, AAAA, CNAME, MX, etc.)</li>
+                            <li>Click "Tra cứu" để xem kết quả</li>
+                            <li>Hỗ trợ 12 loại bản ghi DNS phổ biến</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="help-section">
+                        <h4>🚀 Auto Ladipage DNS</h4>
+                        <ol>
+                            <li>Truy cập domain.tenten.vn và đăng nhập</li>
+                            <li>Vào DNS Settings của domain cần cấu hình</li>
+                            <li>Click "Auto Ladipage DNS" trong extension</li>
+                            <li>Nhập tên miền cần cấu hình</li>
+                            <li>Chọn loại: tên miền chính hoặc tên miền phụ</li>
+                            <li>Click "Tạo DNS" - extension sẽ tự động thực hiện</li>
+                            <li>Theo dõi tiến trình trong log</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+            console.log('Help content loaded successfully');
+        } else {
+            console.error('rightPanelContent element not found');
+        }
+    }
+
+    // Direct panel navigation functions
+    function showWhoisPanel() {
+        console.log('=== Showing WHOIS Panel ===');
+        
+        if (!window.uiManager) {
+            console.error('UIManager not available for showWhoisPanel');
+            return;
+        }
+        
+        window.uiManager.showRightPanel('🔍 Thông tin WHOIS', 'whois');
+        
+        // Clear previous input and results
+        if (elements.whoisDomainInput) elements.whoisDomainInput.value = '';
+        if (elements.whoisContainer) {
+            elements.whoisContainer.innerHTML = '<div class="initial-message">📝 Nhập tên miền ở trên và nhấn "Tra cứu" để xem thông tin WHOIS</div>';
+        }
+        
+        // Focus on input
+        setTimeout(() => {
+            if (elements.whoisDomainInput) {
+                elements.whoisDomainInput.focus();
+            }
+        }, 300);
+    }
+    
+    function showIpInfoPanel() {
+        console.log('=== Showing IP Info Panel ===');
+        
+        if (!window.uiManager) {
+            console.error('UIManager not available for showIpInfoPanel');
+            return;
+        }
+        
+        window.uiManager.showRightPanel('🌍 Thông tin IP/Domain', 'ipinfo');
+        
+        // Clear previous input and results
+        if (elements.ipinfoDomainInput) elements.ipinfoDomainInput.value = '';
+        if (elements.ipInfoContainer) {
+            elements.ipInfoContainer.innerHTML = '<div class="initial-message">📝 Nhập domain/IP ở trên và nhấn "Tra cứu" để xem thông tin địa lý</div>';
+        }
+        
+        // Focus on input
+        setTimeout(() => {
+            if (elements.ipinfoDomainInput) {
+                elements.ipinfoDomainInput.focus();
+            }
+        }, 300);
+    }
+    
+    function showDnsRecordsPanel() {
+        console.log('=== Showing DNS Records Panel ===');
+        
+        if (!window.uiManager) {
+            console.error('UIManager not available for showDnsRecordsPanel');
+            return;
+        }
+        
+        window.uiManager.showRightPanel('📋 Bản ghi DNS', 'dns');
+        
+        // Clear previous input and results
+        if (elements.dnsDomainInput) elements.dnsDomainInput.value = '';
+        if (elements.dnsContainer) {
+            elements.dnsContainer.innerHTML = '<div class="initial-message">📝 Nhập tên miền ở trên và nhấn "Tra cứu" để xem bản ghi DNS</div>';
+        }
+        
+        // Focus on input
+        setTimeout(() => {
+            if (elements.dnsDomainInput) {
+                elements.dnsDomainInput.focus();
+            }
+        }, 300);
+    }
 
     // Final initialization
-    console.log('=== INSTANT RESPONSE MODE v1.6.4 ===');
-    console.log('NO POLLING - Pure event-driven instant detection');
+    console.log('=== Extension Mode v2.1.0 ===');
+    console.log('Ladipage DNS Automation functionality added');
     
-    console.log('=== Popup Script Loaded Successfully v1.6.5 ALWAYS READY ===');
+    console.log('=== Popup Script Loaded Successfully v2.1.0 ===');
 });

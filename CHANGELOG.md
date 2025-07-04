@@ -1,4 +1,43 @@
-# 🚀 Version 1.6.5 - DNS ALWAYS READY
+# 🚀 Version 1.9.0 - Subdomain Input Modal
+
+## ✅ NEW FEATURE: Subdomain Input
+- **Modal nhập tên miền phụ**: Click "Ladipage - Tên miền phụ" → Modal hiện lên để nhập subdomain
+- **Smart Validation**: Kiểm tra format subdomain (phải có dạng: shop.example.com)
+- **Real Automation**: Kết nối với content script thực tế thay vì chỉ simulate
+- **User-friendly Input**: Placeholder và hướng dẫn rõ ràng
+
+## 🎨 UI Improvements:
+- **Domain Modal**: Modal nhập tên miền cho cả main domain và subdomain
+- **Input Validation**: Kiểm tra format trước khi thực hiện automation
+- **Clear Instructions**: Placeholder và labels rõ ràng
+- **Keyboard Support**: Enter key để submit modal
+
+## 🔧 Technical Changes:
+- **Modal Functions**: `showDomainModal()`, `closeDomainModal()`, `handleModalConfirm()`
+- **Subdomain Handler**: `handleSubdomainAutomation()` kết nối với content script
+- **Input Validation**: Check subdomain format trước khi call API
+- **Event Listeners**: Modal close, confirm, keyboard support
+
+## 🎯 User Flow:
+1. **Click "Ladipage - Tên miền phụ"** → Modal mở
+2. **Nhập subdomain**: shop.example.com
+3. **Click "Xác nhận"** → Validation → Automation starts
+4. **Real DNS automation**: Tạo CNAME record thực tế
+
+## 🌿 Subdomain Examples:
+```
+shop.example.com    → Tạo CNAME: shop → dns.ladipage.com
+blog.mysite.vn      → Tạo CNAME: blog → dns.ladipage.com
+app.company.com     → Tạo CNAME: app → dns.ladipage.com
+```
+
+## ✅ Ready for Testing:
+- Modal UI hoạt động
+- Validation logic ready
+- Content script integration
+- Real automation capability
+
+# 🚀 Version 1.8.0 - DNS Handler Fixed & Clean Release
 
 ## ⚡ ALWAYS ENABLED MODE v1.6.5:
 - **DNS Button luôn sáng**: Không cần kiểm tra domain.tenten.vn nữa

@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Load Chrome Extension",
+			"type": "shell",
+			"command": "echo",
+			"args": [
+				"Extension is ready! Load it in Chrome Developer Mode from this folder"
+			],
+			"group": "build",
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

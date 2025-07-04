@@ -11,16 +11,27 @@ class UIManager {
         console.log('=== Showing Right Panel ===');
         console.log('Title:', title);
         console.log('Content type:', content);
+        console.log('Elements check:', {
+            rightPanelTitle: !!this.elements.rightPanelTitle,
+            rightPanel: !!this.elements.rightPanel,
+            body: !!this.elements.body,
+            whoisSection: !!this.elements.whoisSection,
+            ipInfoSection: !!this.elements.ipInfoSection,
+            dnsSection: !!this.elements.dnsSection,
+            ladipageSection: !!this.elements.ladipageSection
+        });
         
         this.elements.rightPanelTitle.textContent = title;
         this.currentPanel = content;
         
         // First expand the body
         this.elements.body.classList.add('expanded');
+        console.log('Body expanded');
         
         // Then show the right panel with a slight delay for smooth transition
         setTimeout(() => {
             this.elements.rightPanel.classList.add('active');
+            console.log('Right panel activated');
         }, 100);
         
         // Hide all content sections first
@@ -36,6 +47,9 @@ class UIManager {
         } else if (content === 'dns') {
             this.elements.dnsSection.style.display = 'block';
             console.log('DNS Records section shown');
+        } else if (content === 'ladipage') {
+            this.elements.ladipageSection.style.display = 'block';
+            console.log('Ladipage section shown');
         }
     }
 
@@ -55,11 +69,12 @@ class UIManager {
     }
 
     hideAllSections() {
-        this.elements.progressSection.style.display = 'none';
-        this.elements.logSection.style.display = 'none';
-        this.elements.whoisSection.style.display = 'none';
-        this.elements.ipInfoSection.style.display = 'none';
-        this.elements.dnsSection.style.display = 'none';
+        // Hide all content sections with null checking
+        if (this.elements.whoisSection) this.elements.whoisSection.style.display = 'none';
+        if (this.elements.ipInfoSection) this.elements.ipInfoSection.style.display = 'none';
+        if (this.elements.dnsSection) this.elements.dnsSection.style.display = 'none';
+        if (this.elements.ladipageSection) this.elements.ladipageSection.style.display = 'none';
+        console.log('All sections hidden');
     }
 
     showError(message) {
@@ -145,36 +160,24 @@ class UIManager {
         }
     }
 
+    // Legacy log functions - disabled since logSection was removed
     addLog(message, type = 'info') {
-        const logContainer = this.elements.logContainer;
-        const logEntry = document.createElement('div');
-        logEntry.className = `log-entry ${type}`;
-        
-        const timestamp = new Date().toLocaleTimeString('vi-VN');
-        logEntry.textContent = `[${timestamp}] ${message}`;
-        
-        logContainer.appendChild(logEntry);
-        logContainer.scrollTop = logContainer.scrollHeight;
-        
-        // Show log section if hidden
-        this.elements.logSection.style.display = 'block';
+        console.log(`[LOG-${type.toUpperCase()}] ${message}`);
+        // Log section removed, just output to console
     }
 
     clearLogs() {
-        this.elements.logContainer.innerHTML = '';
-        this.elements.logSection.style.display = 'none';
+        console.log('Clear logs called (no-op - log section removed)');
     }
 
+    // Legacy progress functions - disabled since progressSection was removed  
     setProgress(percent, text) {
-        this.elements.progressFill.style.width = `${percent}%`;
-        this.elements.progressText.textContent = text || `${percent}%`;
-        
-        // Show progress section if hidden
-        this.elements.progressSection.style.display = 'block';
+        console.log(`Progress: ${percent}% - ${text || 'Processing...'}`);
+        // Progress section removed, just output to console
     }
 
     hideProgress() {
-        this.elements.progressSection.style.display = 'none';
+        console.log('Hide progress called (no-op - progress section removed)');
     }
 
     // Add smooth scrolling for menu section

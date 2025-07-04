@@ -7,10 +7,18 @@ class WhoisHandler {
         this.isLoading = false;
     }
 
-    async handleLookup() {
-        const domain = this.elements.domainInput.value.trim();
+    async handleLookup(domain = null) {
+        // Get domain from parameter or from input (for backward compatibility)
+        const targetDomain = domain || (this.elements.whoisDomainInput ? this.elements.whoisDomainInput.value.trim() : '');
         
-        if (!domain) {
+        console.log('=== WHOIS Handler Called ===');
+        console.log('Target domain:', targetDomain);
+        console.log('Elements available:', {
+            whoisContainer: !!this.elements.whoisContainer,
+            rightPanel: !!this.elements.rightPanel
+        });
+        
+        if (!targetDomain) {
             this.showError('Vui lòng nhập tên miền');
             return;
         }
@@ -21,12 +29,11 @@ class WhoisHandler {
         }
 
         console.log('=== WHOIS Lookup Started ===');
-        console.log('Domain:', domain);
+        console.log('Domain:', targetDomain);
 
-        // Show right panel with WHOIS title
-        window.uiManager.showRightPanel('🔍 Thông tin WHOIS', 'whois');
-
-        // Hiển thị loading state
+        // No need to show right panel - it's already shown
+        // Just update the container with loading state
+        console.log('Setting loading state...');
         this.elements.whoisContainer.innerHTML = '<div class="whois-loading">🔍 Đang tra cứu thông tin WHOIS...</div>';
         
         // Set loading state
@@ -34,7 +41,7 @@ class WhoisHandler {
 
         try {
             // Clean domain name (remove http/https, www, etc.)
-            const cleanDomain = this.cleanDomainName(domain);
+            const cleanDomain = this.cleanDomainName(targetDomain);
             console.log('Clean domain:', cleanDomain);
             
             // Call background script for WHOIS
@@ -61,12 +68,14 @@ class WhoisHandler {
 
     setLoadingState(loading) {
         this.isLoading = loading;
-        if (loading) {
-            this.elements.whoisLookupBtn.classList.add('loading');
-            this.elements.whoisLookupBtn.style.pointerEvents = 'none';
-        } else {
-            this.elements.whoisLookupBtn.classList.remove('loading');
-            this.elements.whoisLookupBtn.style.pointerEvents = 'auto';
+        if (this.elements.whoisLookupBtn) {
+            if (loading) {
+                this.elements.whoisLookupBtn.classList.add('loading');
+                this.elements.whoisLookupBtn.style.pointerEvents = 'none';
+            } else {
+                this.elements.whoisLookupBtn.classList.remove('loading');
+                this.elements.whoisLookupBtn.style.pointerEvents = 'auto';
+            }
         }
     }
 

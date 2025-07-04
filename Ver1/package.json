@@ -1,7 +1,7 @@
 {
   "name": "runsystem-tenten-dns-automation",
-  "version": "2.0.0",
-  "description": "Extension for Runsystem's Techsupport - WHOIS Lookup + IP/Domain Info + DNS Records Checker",
+  "version": "1.0.0",
+  "description": "Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT để trỏ domain Tenten về Ladipage",
   "author": "Runsystem Techsupport Team",
   "license": "MIT",
   "keywords": [
@@ -11,12 +11,7 @@
     "tenten",
     "ladipage",
     "runsystem",
-    "techsupport",
-    "whois",
-    "domain-lookup",
-    "ip-info",
-    "dns-records",
-    "modular-architecture"
+    "techsupport"
   ],
   "scripts": {
     "build": "echo 'Extension ready for loading'",

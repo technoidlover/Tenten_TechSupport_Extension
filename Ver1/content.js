@@ -31,19 +31,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             sendResponse({ success: false, error: error.message });
         });
         return true; // Giữ kết nối mở cho async
-    } else if (message.action === 'startDnsAutomationSub') {
-        if (isAutomationRunning) {
-            sendResponse({ success: false, error: 'Automation đang chạy' });
-            return true;
-        }
-        
-        // Xử lý async cho subdomain
-        startDnsAutomationSub(message.subdomain).then(() => {
-            sendResponse({ success: true });
-        }).catch((error) => {
-            sendResponse({ success: false, error: error.message });
-        });
-        return true; // Giữ kết nối mở cho async
     } else if (message.action === 'stopAutomation') {
         stopAutomation();
         sendResponse({ success: true, stopped: true });
@@ -223,8 +210,7 @@ async function startDnsAutomation(domain) {
         sendMessage('addLog', { message: '✅ CSRF Token đã được lấy tự động', type: 'success' });
         sendMessage('addLog', { message: '✅ Bản ghi CNAME (www → dns.ladipage.com) đã được tạo', type: 'success' });
         sendMessage('addLog', { message: `✅ Bản ghi REDIRECT (@ → http://www.${domain.trim()}/) đã được tạo`, type: 'success' });
-        sendMessage('addLog', { message: '� DNS Automation Ladipage hoàn thành thành công!', type: 'success' });
-        sendMessage('addLog', { message: '�🌐 Domain của bạn bây giờ đã trỏ về Ladipage!', type: 'success' });
+        sendMessage('addLog', { message: '🌐 Domain của bạn bây giờ đã trỏ về Ladipage!', type: 'success' });
         
         isAutomationRunning = false;
         sendMessage('automationComplete', { success: true });
@@ -237,129 +223,7 @@ async function startDnsAutomation(domain) {
             return;
         }
         
-        sendMessage('addLog', { message: `❌ DNS Automation Ladipage thất bại: ${error.message}`, type: 'error' });
-        sendMessage('automationComplete', { success: false });
-    }
-}
-
-async function startDnsAutomationSub(subdomain) {
-    if (isAutomationRunning) {
-        throw new Error('Automation đang chạy');
-    }
-    
-    isAutomationRunning = true;
-    shouldStop = false;
-    
-    try {
-        sendMessage('updateProgress', { percent: 10, message: 'Đang kiểm tra CSRF token...' });
-        sendMessage('addLog', { message: `🚀 Bắt đầu DNS Automation Ladipage cho tên miền phụ: ${subdomain}`, type: 'info' });
-
-        // Check if should stop
-        if (shouldStop) {
-            throw new Error('Automation đã được dừng');
-        }
-
-        // BƯỚC 1: Lấy CSRF Token
-        sendMessage('addLog', { message: '📋 BƯỚC 1: Lấy CSRF Token', type: 'info' });
-        sendMessage('updateProgress', { percent: 20, message: 'Lấy CSRF token...' });
-
-        let csrfToken = null;
-        const inputs = document.querySelectorAll("input[name='dev_token_csrf']");
-        
-        if (inputs.length === 0) {
-            throw new Error("Không tìm thấy CSRF token. Vui lòng truy cập trang DNS Settings.");
-        }
-
-        csrfToken = inputs[0].value;
-        sendMessage('addLog', { message: `✅ CSRF Token đã lấy được: ${csrfToken.substring(0, 10)}...`, type: 'success' });
-
-        // Check if should stop
-        if (shouldStop) {
-            throw new Error('Automation đã được dừng');
-        }
-
-        // Helper functions
-        const encodeForm = (data) =>
-            Object.entries(data)
-                .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v ?? "")}`)
-                .join("&");
-
-        const headers = {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-            "X-Requested-With": "XMLHttpRequest",
-        };
-
-        // Extract subdomain name (before the first dot)
-        const subName = subdomain.split('.')[0];
-        
-        // BƯỚC 2: Tạo CNAME Record cho subdomain
-        sendMessage('addLog', { message: '🔗 BƯỚC 2: Tạo bản ghi CNAME cho subdomain', type: 'info' });
-        sendMessage('updateProgress', { percent: 50, message: 'Tạo bản ghi CNAME cho subdomain...' });
-
-        // Check if should stop
-        if (shouldStop) {
-            throw new Error('Automation đã được dừng');
-        }
-
-        try {
-            const cnameRecord = {
-                "data[name]": subName,
-                "data[type]": "CNAME",
-                "data[value]": "dns.ladipage.com",
-                "data[priority]": "",
-                "data[priority_srv]": "",
-                "data[weight_srv]": "",
-                "data[port_srv]": "",
-                "data[value_srv]": "",
-                "data[tag_caa]": "",
-                "data[flag_caa]": "",
-                "data[value_caa]": "",
-                dev_token_csrf: csrfToken,
-                data_init: "",
-            };
-
-            sendMessage('addLog', { message: `📤 Đang gửi yêu cầu tạo CNAME cho ${subName}...`, type: 'info' });
-            
-            const cnameRes = await fetch("https://domain.tenten.vn/ApiDnsSetting/addDns/", {
-                method: "POST",
-                headers,
-                body: encodeForm(cnameRecord),
-            });
-
-            const cnameJson = await cnameRes.json();
-            sendMessage('addLog', { message: `✅ CNAME Record đã được tạo: ${JSON.stringify(cnameJson)}`, type: 'success' });
-
-        } catch (error) {
-            if (shouldStop) {
-                throw new Error('Automation đã được dừng');
-            }
-            sendMessage('addLog', { message: `⚠️ Lỗi khi tạo CNAME: ${error.message}`, type: 'warning' });
-        }
-
-        // Check final stop condition
-        if (shouldStop) {
-            throw new Error('Automation đã được dừng');
-        }
-
-        // Hoàn thành
-        sendMessage('updateProgress', { percent: 100, message: 'Hoàn thành!' });
-        sendMessage('addLog', { message: '🎉 HOÀN THÀNH AUTOMATION LADIPAGE CHO TÊN MIỀN PHỤ!', type: 'success' });
-        sendMessage('addLog', { message: '✅ CSRF Token đã được lấy tự động', type: 'success' });
-        sendMessage('addLog', { message: `✅ Bản ghi CNAME (${subName} → dns.ladipage.com) đã được tạo`, type: 'success' });
-        sendMessage('addLog', { message: `🌐 Subdomain ${subdomain} bây giờ đã trỏ về Ladipage!`, type: 'success' });
-        
-        isAutomationRunning = false;
-        sendMessage('automationComplete', { success: true });
-
-    } catch (error) {
-        isAutomationRunning = false;
-        
-        if (error.message.includes('đã được dừng')) {
-            // User stopped - already handled in stopAutomation()
-            return;
-        }
-        
-        sendMessage('addLog', { message: `❌ DNS Automation Ladipage thất bại: ${error.message}`, type: 'error' });
+        sendMessage('addLog', { message: `❌ Lỗi nghiêm trọng: ${error.message}`, type: 'error' });
         sendMessage('automationComplete', { success: false });
     }
 }

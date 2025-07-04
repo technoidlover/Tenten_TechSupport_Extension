@@ -1,233 +1,203 @@
-// DNS Records functionality
-// Handles DNS records lookup using Google DNS-over-HTTPS API
+// DNS Records Lookup functionality
+// Handles DNS records lookup using Google DNS API
 
 class DnsRecordsHandler {
     constructor(elements) {
         this.elements = elements;
-        this.isLookupInProgress = false;
+        this.isLoading = false;
     }
 
-    handlePanelOpen() {
-        const domain = this.elements.domainInput.value.trim();
+    async handleLookup(domain = null) {
+        // Get domain from parameter or from input
+        const targetDomain = domain || (this.elements.dnsDomainInput ? this.elements.dnsDomainInput.value.trim() : '');
         
-        if (!domain) {
+        console.log('=== DNS Records Handler Called ===');
+        console.log('Target domain:', targetDomain);
+        console.log('Elements available:', {
+            dnsContainer: !!this.elements.dnsContainer,
+            rightPanel: !!this.elements.rightPanel,
+            recordTypeSelect: !!this.elements.recordTypeSelect
+        });
+        
+        if (!targetDomain) {
             this.showError('Vui lòng nhập tên miền');
             return;
         }
 
-        console.log('=== DNS Records Panel Opened ===');
-        console.log('Domain:', domain);
-
-        // Show right panel with DNS Records title
-        window.uiManager.showRightPanel('📋 Bản ghi DNS', 'dns');
-
-        // Set default state
-        this.elements.dnsContainer.innerHTML = '<div class="dns-empty">🔍 Chọn loại bản ghi và nhấn "Tra cứu" để xem kết quả</div>';
-    }
-
-    async handleLookup() {
-        const domain = this.elements.domainInput.value.trim();
-        const recordType = this.elements.recordTypeSelect.value;
-        
-        if (!domain) {
-            this.showError('Vui lòng nhập tên miền');
-            return;
-        }
-
-        if (this.isLookupInProgress) {
+        if (this.isLoading) {
             console.log('DNS lookup already in progress');
             return;
         }
 
-        console.log('=== DNS Lookup Started ===');
-        console.log('Domain:', domain);
-        console.log('Record Type:', recordType);
+        console.log('=== DNS Records Lookup Started ===');
+        console.log('Domain:', targetDomain);
 
-        // Hiển thị loading state
-        this.elements.dnsContainer.innerHTML = `<div class="dns-loading">🔍 Đang tra cứu bản ghi ${recordType} cho ${domain}...</div>`;
+        // Get selected record type
+        const recordType = this.elements.recordTypeSelect ? this.elements.recordTypeSelect.value : 'A';
+        console.log('Record type:', recordType);
+
+        // Show loading state in container
+        console.log('Setting loading state...');
+        this.elements.dnsContainer.innerHTML = '<div class="dns-loading">🔍 Đang tra cứu DNS records...</div>';
         
         // Set loading state
         this.setLoadingState(true);
 
         try {
             // Clean domain name
-            const cleanDomain = this.cleanDomainName(domain);
+            const cleanDomain = this.cleanDomainName(targetDomain);
             console.log('Clean domain:', cleanDomain);
             
-            // Call background script for DNS lookup
-            console.log('Sending DNS lookup message to background script...');
-            const response = await this.sendMessage({ 
-                action: 'dnsLookup', 
-                domain: cleanDomain, 
-                recordType: recordType 
-            });
+            // Lookup DNS records using Google DNS API
+            console.log('Calling Google DNS API...');
+            const dnsData = await this.lookupDnsRecords(cleanDomain, recordType);
             
-            console.log('=== DNS Lookup Response Received ===');
-            console.log('Response:', response);
+            console.log('DNS API response:', dnsData);
             
-            if (response && response.success) {
-                console.log('DNS Lookup success, displaying data...');
-                this.displayDnsRecords(response.data, recordType, cleanDomain, response.source);
-            } else {
-                console.error('DNS Lookup API error:', response);
-                this.elements.dnsContainer.innerHTML = `<div class="dns-error">❌ Lỗi: ${response?.error || 'Không thể tra cứu bản ghi DNS'}</div>`;
-            }
+            // Display results
+            this.displayDnsResults(dnsData, cleanDomain, recordType);
+            
         } catch (error) {
-            console.error('DNS Lookup error:', error);
-            this.elements.dnsContainer.innerHTML = `<div class="dns-error">❌ Lỗi: ${error.message}</div>`;
+            console.error('DNS lookup error:', error);
+            this.showError('Lỗi tra cứu DNS: ' + error.message);
         } finally {
             this.setLoadingState(false);
         }
     }
 
-    setLoadingState(loading) {
-        this.isLookupInProgress = loading;
-        if (loading) {
-            this.elements.lookupDnsBtn.disabled = true;
-            this.elements.lookupDnsBtn.textContent = '🔄 Đang tra cứu...';
-        } else {
-            this.elements.lookupDnsBtn.disabled = false;
-            this.elements.lookupDnsBtn.textContent = '🔍 Tra cứu';
-        }
-    }
-
-    async sendMessage(message) {
-        return new Promise((resolve) => {
-            chrome.runtime.sendMessage(message, (response) => {
-                if (chrome.runtime.lastError) {
-                    console.error('Chrome runtime error:', chrome.runtime.lastError);
-                    resolve({
-                        success: false,
-                        error: 'Lỗi kết nối với background script: ' + chrome.runtime.lastError.message
-                    });
-                } else {
-                    resolve(response);
-                }
-            });
+    async lookupDnsRecords(domain, recordType) {
+        const apiUrl = `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${recordType}`;
+        
+        console.log('DNS API URL:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
     }
 
-    cleanDomainName(domain) {
-        // Remove protocol
-        domain = domain.replace(/^https?:\/\//, '');
+    displayDnsResults(data, domain, recordType) {
+        console.log('Displaying DNS results for:', domain, recordType, data);
         
-        // Remove www
-        domain = domain.replace(/^www\./, '');
-        
-        // Remove path
-        domain = domain.split('/')[0];
-        
-        // Remove port
-        domain = domain.split(':')[0];
-        
-        return domain.toLowerCase().trim();
-    }
-
-    displayDnsRecords(records, recordType, domain, source) {
-        let html = '';
-        
-        if (!records || records.length === 0) {
-            html = `<div class="dns-empty">❌ Không tìm thấy bản ghi ${recordType} cho ${domain}</div>`;
-        } else {
-            // Summary
-            html += `<div class="dns-summary">
-                <div class="dns-summary-title">📊 Tóm tắt bản ghi ${recordType}</div>
-                <div class="dns-summary-stats">
-                    🔍 Domain: <strong>${domain}</strong><br>
-                    📋 Loại: <strong>${recordType}</strong><br>
-                    📊 Số lượng: <strong>${records.length} bản ghi</strong>
+        let html = `
+            <div class="dns-results">
+                <div class="dns-header">
+                    <h3>🔍 DNS Records cho ${domain}</h3>
+                    <div class="dns-type">Loại: ${recordType}</div>
                 </div>
-            </div>`;
+        `;
+
+        if (data.Status === 0 && data.Answer && data.Answer.length > 0) {
+            html += '<div class="dns-answers">';
+            html += '<h4>📋 Kết quả:</h4>';
             
-            // Header
-            html += `<div class="dns-header">
-                <div class="dns-record-type">Loại</div>
-                <div class="dns-record-value" style="flex: 1; margin-right: 12px;">Giá trị</div>
-                <div class="dns-record-ttl">TTL</div>
-            </div>`;
-            
-            // Records
-            records.forEach((record, index) => {
-                const isHighlight = index % 2 === 0;
-                html += `<div class="dns-record ${isHighlight ? 'highlight' : ''}">
-                    <div class="dns-record-type">${record.type || recordType}</div>
-                    <div class="dns-record-value">${this.formatDnsValue(record, recordType)}</div>
-                    <div class="dns-record-ttl">${record.ttl || 'N/A'}</div>
-                </div>`;
+            data.Answer.forEach((record, index) => {
+                const recordTypeName = this.getRecordTypeName(record.type);
+                html += `
+                    <div class="dns-record">
+                        <div class="record-info">
+                            <span class="record-type">${recordTypeName}</span>
+                            <span class="record-data">${record.data}</span>
+                        </div>
+                        <div class="record-meta">
+                            <span class="record-ttl">TTL: ${record.TTL}s</span>
+                        </div>
+                    </div>
+                `;
             });
+            
+            html += '</div>';
+        } else {
+            html += '<div class="dns-no-results">❌ Không tìm thấy DNS records cho domain này</div>';
         }
-        
-        // Source info
-        if (source) {
-            html += `<div class="dns-source">📡 Nguồn: ${source}</div>`;
+
+        // Add additional info if available
+        if (data.Additional && data.Additional.length > 0) {
+            html += '<div class="dns-additional">';
+            html += '<h4>ℹ️ Thông tin bổ sung:</h4>';
+            data.Additional.forEach(record => {
+                const recordTypeName = this.getRecordTypeName(record.type);
+                html += `
+                    <div class="dns-record additional">
+                        <span class="record-type">${recordTypeName}</span>
+                        <span class="record-data">${record.data}</span>
+                        <span class="record-ttl">TTL: ${record.TTL}s</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
         }
-        
+
+        html += `
+                <div class="dns-footer">
+                    <div class="query-time">⏱️ Thời gian truy vấn: ${new Date().toLocaleTimeString('vi-VN')}</div>
+                </div>
+            </div>
+        `;
+
         this.elements.dnsContainer.innerHTML = html;
     }
 
-    formatDnsValue(record, recordType) {
-        switch (recordType) {
-            case 'A':
-            case 'AAAA':
-                return record.address || record.value || record.data;
-            
-            case 'CNAME':
-            case 'PTR':
-                return record.target || record.value || record.data;
-            
-            case 'MX':
-                const priority = record.priority || record.preference || '';
-                const exchange = record.exchange || record.value || record.data;
-                return priority ? `${priority} ${exchange}` : exchange;
-            
-            case 'NS':
-                return record.nameserver || record.value || record.data;
-            
-            case 'TXT':
-                let txtValue = record.text || record.value || record.data;
-                if (Array.isArray(txtValue)) {
-                    txtValue = txtValue.join(' ');
-                }
-                // Truncate long TXT records
-                return txtValue.length > 100 ? txtValue.substring(0, 100) + '...' : txtValue;
-            
-            case 'SOA':
-                const soa = record.value || record.data;
-                if (typeof soa === 'object') {
-                    return `${soa.mname || ''} ${soa.rname || ''} ${soa.serial || ''}`;
-                }
-                return soa;
-            
-            case 'SRV':
-                const priority_srv = record.priority || '';
-                const weight = record.weight || '';
-                const port = record.port || '';
-                const target_srv = record.target || record.value || record.data;
-                return `${priority_srv} ${weight} ${port} ${target_srv}`.trim();
-            
-            case 'CAA':
-                const flags = record.flags || '';
-                const tag = record.tag || '';
-                const value_caa = record.value || record.data;
-                return `${flags} ${tag} ${value_caa}`.trim();
-            
-            case 'DS':
-            case 'DNSKEY':
-                return record.value || record.data || 'Complex record - see raw data';
-            
-            default:
-                return record.value || record.data || record.address || 'Unknown format';
-        }
+    getRecordTypeName(type) {
+        const typeMap = {
+            1: 'A',
+            2: 'NS', 
+            5: 'CNAME',
+            6: 'SOA',
+            15: 'MX',
+            16: 'TXT',
+            28: 'AAAA',
+            33: 'SRV'
+        };
+        return typeMap[type] || `TYPE${type}`;
+    }
+
+    cleanDomainName(domain) {
+        return domain
+            .replace(/^https?:\/\//, '')
+            .replace(/^www\./, '')
+            .replace(/\/$/, '')
+            .toLowerCase()
+            .trim();
     }
 
     showError(message) {
-        if (window.uiManager && window.uiManager.showError) {
-            window.uiManager.showError(message);
-        } else {
-            alert(message);
+        console.error('DNS Error:', message);
+        this.elements.dnsContainer.innerHTML = `
+            <div class="dns-error">
+                <div class="error-icon">❌</div>
+                <div class="error-message">${message}</div>
+                <div class="error-time">${new Date().toLocaleTimeString('vi-VN')}</div>
+            </div>
+        `;
+    }
+
+    setLoadingState(loading) {
+        this.isLoading = loading;
+        
+        if (this.elements.dnsSubmitBtn) {
+            this.elements.dnsSubmitBtn.disabled = loading;
+            this.elements.dnsSubmitBtn.textContent = loading ? 'Đang tra cứu...' : 'Tra cứu DNS';
+        }
+        
+        if (this.elements.dnsDomainInput) {
+            this.elements.dnsDomainInput.disabled = loading;
+        }
+        
+        if (this.elements.recordTypeSelect) {
+            this.elements.recordTypeSelect.disabled = loading;
         }
     }
 }
 
-// Export for use in main popup.js
+// Export for use in popup-main.js
 window.DnsRecordsHandler = DnsRecordsHandler;

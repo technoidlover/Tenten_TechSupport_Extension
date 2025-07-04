@@ -7,10 +7,18 @@ class IpInfoHandler {
         this.isLoading = false;
     }
 
-    async handleLookup() {
-        const domain = this.elements.domainInput.value.trim();
+    async handleLookup(domain = null) {
+        // Get domain from parameter or from input (for backward compatibility)
+        const targetHost = domain || (this.elements.ipinfoDomainInput ? this.elements.ipinfoDomainInput.value.trim() : '');
         
-        if (!domain) {
+        console.log('=== IP Info Handler Called ===');
+        console.log('Target host:', targetHost);
+        console.log('Elements available:', {
+            ipInfoContainer: !!this.elements.ipInfoContainer,
+            rightPanel: !!this.elements.rightPanel
+        });
+        
+        if (!targetHost) {
             this.showError('Vui lòng nhập tên miền hoặc IP');
             return;
         }
@@ -21,12 +29,21 @@ class IpInfoHandler {
         }
 
         console.log('=== IP Info Lookup Started ===');
-        console.log('Host:', domain);
+        console.log('Host:', targetHost);
+
+        // No need to show right panel - it's already shown
+        // Just update the container with loading state
+        console.log('Setting loading state...');
+
+        console.log('=== IP Info Lookup Started ===');
+        console.log('Host:', targetHost);
 
         // Show right panel with IP Info title
+        console.log('Showing right panel...');
         window.uiManager.showRightPanel('🌍 Thông tin IP/Domain', 'ipinfo');
 
         // Hiển thị loading state
+        console.log('Setting loading state...');
         this.elements.ipInfoContainer.innerHTML = '<div class="ipinfo-loading">🌍 Đang tra cứu thông tin IP/Domain...</div>';
         
         // Set loading state
@@ -34,7 +51,7 @@ class IpInfoHandler {
 
         try {
             // Clean domain name
-            const cleanHost = this.cleanHostName(domain);
+            const cleanHost = this.cleanHostName(targetHost);
             console.log('Clean host:', cleanHost);
             
             // Call background script for IP Info
@@ -61,12 +78,14 @@ class IpInfoHandler {
 
     setLoadingState(loading) {
         this.isLoading = loading;
-        if (loading) {
-            this.elements.ipInfoBtn.classList.add('loading');
-            this.elements.ipInfoBtn.style.pointerEvents = 'none';
-        } else {
-            this.elements.ipInfoBtn.classList.remove('loading');
-            this.elements.ipInfoBtn.style.pointerEvents = 'auto';
+        if (this.elements.ipInfoBtn) {
+            if (loading) {
+                this.elements.ipInfoBtn.classList.add('loading');
+                this.elements.ipInfoBtn.style.pointerEvents = 'none';
+            } else {
+                this.elements.ipInfoBtn.classList.remove('loading');
+                this.elements.ipInfoBtn.style.pointerEvents = 'auto';
+            }
         }
     }
 

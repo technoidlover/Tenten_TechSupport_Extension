@@ -1,19 +1,15 @@
 {
   "manifest_version": 3,
   "name": "Runsystem Tenten DNS Automation",
-  "version": "2.1.0",
-  "description": "Extension for Runsystem's Techsupport - WHOIS Lookup + IP/Domain Info + DNS Records Checker + Auto Ladipage DNS",
+  "version": "1.0.0",
+  "description": "Extension for Runsystem's Techsupport - Tự động tạo CNAME + REDIRECT để trỏ domain Tenten về Ladipage",
   "permissions": [
     "activeTab",
     "storage",
-    "scripting",
-    "tabs"
+    "scripting"
   ],
   "host_permissions": [
-    "https://domain.tenten.vn/*",
-    "https://whois.tenten.vn/*",
-    "https://check-host.net/*",
-    "https://dns.google/*"
+    "https://domain.tenten.vn/*"
   ],
   "action": {
     "default_popup": "popup.html",

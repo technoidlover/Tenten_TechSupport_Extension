@@ -2,12 +2,37 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=420, initial-scale=1.0">
-    <title>Tenten DNS Automation</title>
+    <meta name="viewport" content="width=800, initial-scale=1.0">
+    <title>Test Extension Debug</title>
     <link rel="stylesheet" href="popup.css">
     <link rel="stylesheet" href="popup-fix.css">
+    <style>
+        body {
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .debug-info {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .log-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
 </head>
 <body>
+    <div class="debug-info">
+        <h2>Extension Debug Test</h2>
+        <p>This page simulates the extension popup for debugging.</p>
+    </div>
+
     <div class="container">
         <div class="main-content">
             <!-- Left Panel - Main Controls -->
@@ -26,7 +51,6 @@
                 <div class="menu-section">
                     <h3>Chức năng DNS</h3>
                     
-                    <!-- DNS Automation with Submenu -->
                     <!-- WHOIS Lookup -->
                     <div class="menu-item" id="whoisLookup">
                         <div class="menu-item-content">
@@ -63,18 +87,6 @@
                         </div>
                     </div>
 
-                    <!-- Auto Ladipage DNS -->
-                    <div class="menu-item" id="autoLadipage">
-                        <div class="menu-item-content">
-                            <i class="icon">🚀</i>
-                            <div class="menu-text">
-                                <div class="menu-title">Auto Ladipage DNS</div>
-                                <div class="menu-desc">Tự động tạo CNAME + REDIRECT để trỏ về Ladipage</div>
-                            </div>
-                            <div class="menu-status ready">READY</div>
-                        </div>
-                    </div>
-
                     <!-- Webhook Records (Coming Soon) -->
                     <div class="menu-item disabled" id="webhookRecords">
                         <div class="menu-item-content">
@@ -93,31 +105,15 @@
                             <i class="icon">⚙️</i>
                             <div class="menu-text">
                                 <div class="menu-title">Custom Records</div>
-                                <div class="menu-desc">Tạo bản ghi tùy chỉnh</div>
+                                <div class="menu-desc">Tùy chỉnh bản ghi DNS</div>
                             </div>
                             <div class="menu-status coming-soon">SOON</div>
                         </div>
                     </div>
-
-                    <!-- Batch Operations (Coming Soon) -->
-                    <div class="menu-item disabled" id="batchOps">
-                        <div class="menu-item-content">
-                            <i class="icon">📋</i>
-                            <div class="menu-text">
-                                <div class="menu-title">Batch Operations</div>
-                                <div class="menu-desc">Xử lý hàng loạt</div>
-                            </div>
-                            <div class="menu-status coming-soon">SOON</div>
-                        </div>
-                    </div>
-
-
                 </div>
 
-
-
                 <div class="footer">
-                    <div class="version">v2.1.0 - With Ladipage DNS</div>
+                    <div class="version">v2.0.0 - Clean (No Ladipage)</div>
                     <div class="help">
                         <a href="#" id="helpLink">Hướng dẫn</a>
                     </div>
@@ -183,50 +179,56 @@
                         </div>
                         <div class="dns-container" id="dnsContainer"></div>
                     </div>
-
-                    <!-- Auto Ladipage DNS Section -->
-                    <div class="ladipage-section" id="ladipageSection" style="display: none;">
-                        <div class="domain-input-section">
-                            <label for="ladipageDomainInput">Nhập tên miền để tự động tạo DNS Ladipage:</label>
-                            <div class="input-group">
-                                <input type="text" id="ladipageDomainInput" class="domain-input" placeholder="example.com" />
-                                <button id="ladipageSubmitBtn" class="submit-btn">🚀 Tạo DNS</button>
-                            </div>
-                            <div class="ladipage-type-selection">
-                                <label>
-                                    <input type="radio" name="ladipageType" value="domain" checked>
-                                    Tên miền chính (example.com)
-                                </label>
-                                <label>
-                                    <input type="radio" name="ladipageType" value="subdomain">
-                                    Tên miền phụ (sub.example.com)
-                                </label>
-                            </div>
-                        </div>
-                        <div class="ladipage-progress" id="ladipageProgress" style="display: none;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="ladipageProgressFill"></div>
-                            </div>
-                            <div class="progress-text" id="ladipageProgressText">Đang xử lý...</div>
-                            <div class="progress-controls">
-                                <button id="ladipageStopBtn" class="stop-button">⛔ Dừng</button>
-                            </div>
-                        </div>
-                        <div class="ladipage-container" id="ladipageContainer"></div>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Domain Input Modal -->
+    <div class="debug-info">
+        <h3>Debug Console</h3>
+        <div id="debugConsole" style="max-height: 300px; overflow-y: auto; background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></div>
+        <button onclick="clearDebug()">Clear Console</button>
+    </div>
+
+    <script>
+        // Debug console
+        const debugConsole = document.getElementById('debugConsole');
+        function logDebug(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log-item ${type}`;
+            div.innerHTML = `<span style="opacity: 0.6;">${new Date().toLocaleTimeString()}</span> ${message}`;
+            debugConsole.appendChild(div);
+            debugConsole.scrollTop = debugConsole.scrollHeight;
+        }
+        
+        function clearDebug() {
+            debugConsole.innerHTML = '';
+        }
+        
+        // Override console.log for debugging
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = function(...args) {
+            logDebug(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            logDebug(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+        
+        logDebug('🔧 Debug page loaded', 'success');
+    </script>
+
     <!-- Load modular JavaScript files -->
     <script src="js/domain-utils.js"></script>
     <script src="js/ui-manager.js"></script>
     <script src="js/whois-handler.js"></script>
     <script src="js/ipinfo-handler.js"></script>
     <script src="js/dns-records-handler.js"></script>
-    <script src="js/ladipage-handler.js"></script>
     <script src="js/popup-main.js"></script>
+    <script src="test-script.js"></script>
 </body>
 </html>
