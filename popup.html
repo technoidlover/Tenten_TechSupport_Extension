@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <div class="main-content">
-            <!-- Left Panel - Main Controls -->
+            <!-- Left Panel - IP Widget & Server Info -->
             <div class="left-panel">
                 <div class="header">
                     <img src="icons/icon48.png" alt="Logo" class="logo">
@@ -23,14 +23,37 @@
                     <span id="statusText">Chưa kết nối</span>
                 </div>
 
+                <!-- IP Widget Section -->
+                <div class="ip-widget-section">
+                    <h3>🌐 IP & Server Info</h3>
+                    <div class="ip-widget-container" id="ipWidgetContainer">
+                        <div class="ip-widget-loading">🔄 Đang tải thông tin IP...</div>
+                    </div>
+                </div>
+
+                <!-- Domain Input Section -->
+                <div class="domain-input-section">
+                    <label for="domainInput">Tên miền:</label>
+                    <input type="text" id="domainInput" class="domain-input" placeholder="example.com">
+                </div>
+
+                <div class="footer">
+                    <div class="version">v2.2.0 - With IP Widget</div>
+                    <div class="help">
+                        <a href="#" id="helpLink">Hướng dẫn</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel - Main Controls -->
+            <div class="center-panel">
                 <div class="menu-section">
                     <h3>Chức năng DNS</h3>
                     
-                    <!-- DNS Automation with Submenu -->
                     <!-- WHOIS Lookup -->
                     <div class="menu-item" id="whoisLookup">
                         <div class="menu-item-content">
-                            <i class="icon">🔍</i>
+                            <i class="icon">�</i>
                             <div class="menu-text">
                                 <div class="menu-title">WHOIS Lookup</div>
                                 <div class="menu-desc">Tra cứu thông tin đăng ký tên miền</div>
@@ -54,7 +77,7 @@
                     <!-- DNS Records -->
                     <div class="menu-item" id="dnsRecords">
                         <div class="menu-item-content">
-                            <i class="icon">📋</i>
+                            <i class="icon">�</i>
                             <div class="menu-text">
                                 <div class="menu-title">DNS Records</div>
                                 <div class="menu-desc">Tra cứu bản ghi DNS (A, AAAA, CNAME, MX, etc.)</div>
@@ -64,9 +87,9 @@
                     </div>
 
                     <!-- Auto Ladipage DNS -->
-                    <div class="menu-item" id="autoLadipage">
+                    <div class="menu-item" id="dnsAutomation">
                         <div class="menu-item-content">
-                            <i class="icon">🚀</i>
+                            <i class="icon">�</i>
                             <div class="menu-text">
                                 <div class="menu-title">Auto Ladipage DNS</div>
                                 <div class="menu-desc">Tự động tạo CNAME + REDIRECT để trỏ về Ladipage</div>
@@ -75,52 +98,34 @@
                         </div>
                     </div>
 
-                    <!-- Webhook Records (Coming Soon) -->
-                    <div class="menu-item disabled" id="webhookRecords">
+                    <!-- Port Checker -->
+                    <div class="menu-item" id="portChecker">
                         <div class="menu-item-content">
-                            <i class="icon">🔗</i>
+                            <i class="icon">🔌</i>
                             <div class="menu-text">
-                                <div class="menu-title">Webhook Records</div>
-                                <div class="menu-desc">Quản lý webhook DNS</div>
+                                <div class="menu-title">Port Checker</div>
+                                <div class="menu-desc">Kiểm tra port mở/đóng trên IP hoặc domain</div>
                             </div>
-                            <div class="menu-status coming-soon">SOON</div>
+                            <div class="menu-status ready">READY</div>
                         </div>
                     </div>
-
-                    <!-- Custom Records (Coming Soon) -->
-                    <div class="menu-item disabled" id="customRecords">
-                        <div class="menu-item-content">
-                            <i class="icon">⚙️</i>
-                            <div class="menu-text">
-                                <div class="menu-title">Custom Records</div>
-                                <div class="menu-desc">Tạo bản ghi tùy chỉnh</div>
-                            </div>
-                            <div class="menu-status coming-soon">SOON</div>
-                        </div>
-                    </div>
-
-                    <!-- Batch Operations (Coming Soon) -->
-                    <div class="menu-item disabled" id="batchOps">
-                        <div class="menu-item-content">
-                            <i class="icon">📋</i>
-                            <div class="menu-text">
-                                <div class="menu-title">Batch Operations</div>
-                                <div class="menu-desc">Xử lý hàng loạt</div>
-                            </div>
-                            <div class="menu-status coming-soon">SOON</div>
-                        </div>
-                    </div>
-
-
                 </div>
 
-
-
-                <div class="footer">
-                    <div class="version">v2.2.0 - With IP Widget</div>
-                    <div class="help">
-                        <a href="#" id="helpLink">Hướng dẫn</a>
+                <!-- Progress Section -->
+                <div class="progress-section" id="progressSection" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
                     </div>
+                    <div class="progress-text" id="progressText">Sẵn sàng</div>
+                    <div class="progress-controls">
+                        <button id="stopButton" class="stop-button" style="display: none;">⛔ Dừng</button>
+                    </div>
+                </div>
+
+                <!-- Log Section -->
+                <div class="log-section" id="logSection" style="display: none;">
+                    <h3>📋 Log</h3>
+                    <div class="log-container" id="logContainer"></div>
                 </div>
             </div>
 
@@ -133,37 +138,16 @@
                 <div class="right-panel-content" id="rightPanelContent">
                     <!-- WHOIS Results -->
                     <div class="whois-section" id="whoisSection" style="display: none;">
-                        <div class="domain-input-section">
-                            <label for="whoisDomainInput">Nhập tên miền cần tra cứu WHOIS:</label>
-                            <div class="input-group">
-                                <input type="text" id="whoisDomainInput" class="domain-input" placeholder="example.com" />
-                                <button id="whoisSubmitBtn" class="submit-btn">🔍 Tra cứu</button>
-                            </div>
-                        </div>
                         <div class="whois-container" id="whoisContainer"></div>
                     </div>
 
                     <!-- IP Info Results -->
                     <div class="ipinfo-section" id="ipInfoSection" style="display: none;">
-                        <div class="domain-input-section">
-                            <label for="ipinfoDomainInput">Nhập domain/IP cần tra cứu:</label>
-                            <div class="input-group">
-                                <input type="text" id="ipinfoDomainInput" class="domain-input" placeholder="example.com hoặc 1.1.1.1" />
-                                <button id="ipinfoSubmitBtn" class="submit-btn">🔍 Tra cứu</button>
-                            </div>
-                        </div>
                         <div class="ipinfo-container" id="ipInfoContainer"></div>
                     </div>
 
                     <!-- DNS Records Results -->
                     <div class="dns-section" id="dnsSection" style="display: none;">
-                        <div class="domain-input-section">
-                            <label for="dnsDomainInput">Nhập tên miền cần tra cứu DNS:</label>
-                            <div class="input-group">
-                                <input type="text" id="dnsDomainInput" class="domain-input" placeholder="example.com" />
-                                <button id="dnsSubmitBtn" class="submit-btn">🔍 Tra cứu</button>
-                            </div>
-                        </div>
                         <div class="dns-controls">
                             <label for="recordType">Loại bản ghi:</label>
                             <select id="recordType" class="record-type-select">
@@ -180,52 +164,32 @@
                                 <option value="DS" title="Delegation Signer">DS</option>
                                 <option value="DNSKEY" title="ZSK / KSK Public Keys">DNSKEY</option>
                             </select>
+                            <button id="lookupDnsBtn" class="submit-btn">� Tra cứu</button>
                         </div>
                         <div class="dns-container" id="dnsContainer"></div>
                     </div>
 
-                    <!-- Auto Ladipage DNS Section -->
-                    <div class="ladipage-section" id="ladipageSection" style="display: none;">
-                        <div class="domain-input-section">
-                            <label for="ladipageDomainInput">Nhập tên miền để tự động tạo DNS Ladipage:</label>
-                            <div class="input-group">
-                                <input type="text" id="ladipageDomainInput" class="domain-input" placeholder="example.com" />
-                                <button id="ladipageSubmitBtn" class="submit-btn">🚀 Tạo DNS</button>
-                            </div>
-                            <div class="ladipage-type-selection">
-                                <label>
-                                    <input type="radio" name="ladipageType" value="domain" checked>
-                                    Tên miền chính (example.com)
-                                </label>
-                                <label>
-                                    <input type="radio" name="ladipageType" value="subdomain">
-                                    Tên miền phụ (sub.example.com)
-                                </label>
-                            </div>
+                    <!-- Port Checker Section -->
+                    <div class="port-section" id="portSection" style="display: none;">
+                        <div class="port-quick-buttons">
+                            <button class="quick-port-btn" data-port="80">HTTP (80)</button>
+                            <button class="quick-port-btn" data-port="443">HTTPS (443)</button>
+                            <button class="quick-port-btn" data-port="22">SSH (22)</button>
+                            <button class="quick-port-btn" data-port="21">FTP (21)</button>
+                            <button class="quick-port-btn" data-port="25">SMTP (25)</button>
+                            <button class="quick-port-btn" data-port="53">DNS (53)</button>
+                            <button class="quick-port-btn" data-port="3306">MySQL (3306)</button>
+                            <button class="quick-port-btn" data-port="5432">PostgreSQL (5432)</button>
                         </div>
-                        <div class="ladipage-progress" id="ladipageProgress" style="display: none;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="ladipageProgressFill"></div>
-                            </div>
-                            <div class="progress-text" id="ladipageProgressText">Đang xử lý...</div>
-                            <div class="progress-controls">
-                                <button id="ladipageStopBtn" class="stop-button">⛔ Dừng</button>
-                            </div>
-                        </div>
-                        <div class="ladipage-container" id="ladipageContainer"></div>
+                        <div class="port-container" id="portContainer"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Load modular JavaScript files -->
-    <script src="js/domain-utils.js"></script>
-    <script src="js/ui-manager.js"></script>
-    <script src="js/whois-handler.js"></script>
-    <script src="js/ipinfo-handler.js"></script>
-    <script src="js/dns-records-handler.js"></script>
-    <script src="js/ladipage-handler.js"></script>
-    <script src="js/popup-main.js"></script>
+    <!-- Load JavaScript files -->
+    <script src="js/port-checker-handler.js"></script>
+    <script src="popup.js"></script>
 </body>
 </html>

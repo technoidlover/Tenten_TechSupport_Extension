@@ -16,7 +16,10 @@
     "https://dns.google/*",
     "https://ipapi.co/*",
     "https://ipinfo.io/*",
-    "http://ip-api.com/*"
+    "http://ip-api.com/*",
+    "https://portquiz.net/*",
+    "http://*/*",
+    "https://*/*"
   ],
   "action": {
     "default_popup": "popup.html",

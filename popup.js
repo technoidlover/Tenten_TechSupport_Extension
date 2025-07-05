@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const lookupDnsBtn = document.getElementById('lookupDnsBtn');
     const helpLink = document.getElementById('helpLink');
     const stopButton = document.getElementById('stopButton');
+    const portCheckerBtn = document.getElementById('portChecker');
+    const portSection = document.getElementById('portSection');
     
     // Right panel elements
     const rightPanel = document.getElementById('rightPanel');
@@ -64,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
     lookupDnsBtn.addEventListener('click', handleDnsLookup);
     helpLink.addEventListener('click', showHelp);
     closePanelBtn.addEventListener('click', closeRightPanel);
+    portCheckerBtn.addEventListener('click', handlePortChecker);
     
     // Global stop function để có thể gọi từ HTML
     window.stopAutomation = stopAutomation;
@@ -764,6 +767,7 @@ document.addEventListener('DOMContentLoaded', function() {
         whoisSection.style.display = 'none';
         ipInfoSection.style.display = 'none';
         dnsSection.style.display = 'none';
+        portSection.style.display = 'none';
     }
 
     function displayIpInfo(data, warning, source) {
@@ -843,6 +847,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (content === 'dns') {
             dnsSection.style.display = 'block';
             console.log('DNS Records section shown');
+        } else if (content === 'port') {
+            portSection.style.display = 'block';
+            console.log('Port Checker section shown');
         }
     }
 
@@ -858,5 +865,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
         
         hideAllSections();
+    }
+
+    async function handlePortChecker() {
+        console.log('=== Port Checker Started ===');
+        
+        // Show right panel with Port Checker title
+        showRightPanel('🔌 Port Checker', 'port');
+        
+        // Clear previous results and initialize
+        const portContainer = document.getElementById('portContainer');
+        if (portContainer) {
+            portContainer.innerHTML = '<div class="port-empty">🔌 Nhập IP/domain và port để kiểm tra kết nối</div>';
+        }
+        
+        // Ensure port checker handler is available
+        let attempts = 0;
+        const maxAttempts = 10;
+        
+        const waitForHandler = () => {
+            attempts++;
+            
+            if (typeof window.portCheckerHandler !== 'undefined') {
+                console.log('Port Checker Handler found, initializing event listeners...');
+                window.portCheckerHandler.initEventListeners();
+                console.log('Port Checker ready to use!');
+                return;
+            }
+            
+            if (attempts < maxAttempts) {
+                console.log(`Waiting for Port Checker Handler... (attempt ${attempts}/${maxAttempts})`);
+                setTimeout(waitForHandler, 100);
+            } else {
+                console.error('Port Checker Handler failed to initialize after maximum attempts');
+                // Try to create it manually
+                try {
+                    console.log('Creating Port Checker Handler manually...');
+                    window.portCheckerHandler = new PortCheckerHandler();
+                    window.portCheckerHandler.initEventListeners();
+                    console.log('Port Checker Handler created manually and ready!');
+                } catch (error) {
+                    console.error('Failed to create Port Checker Handler manually:', error);
+                    // Show error in UI
+                    if (portContainer) {
+                        portContainer.innerHTML = '<div class="port-error">❌ Lỗi khởi tạo Port Checker. Vui lòng thử lại.</div>';
+                    }
+                }
+            }
+        };
+        
+        waitForHandler();
     }
 });

@@ -75,6 +75,18 @@ Extension for Runsystem's Techsupport - **Complete DNS Management Solution** wit
 -  **Hover Tooltips**: Country name on flag hover
 -  **No Layout Conflicts**: Does not affect webpage layout
 
+####  4. Port Checker v1.0.0
+
+**Check if ports are open or closed on IP addresses or domains**
+
+-  **Quick Port Buttons**: Common ports (HTTP, HTTPS, SSH, FTP, etc.)
+-  **Custom Port Input**: Check any port (1-65535)
+-  **Multiple Methods**: WebSocket, HTTP, and API-based checking
+-  **Real-time Results**: Fast response with detailed status
+-  **Service Detection**: Identifies common services on ports
+-  **Response Time**: Shows connection speed and method used
+-  **History Tracking**: Keeps last 5 port check results
+
 ###  Installation & Usage
 
 ####  Installation
@@ -189,6 +201,18 @@ Extension cho Runsystem's Techsupport - **Giải pháp quản lý DNS hoàn ch�
 -  **Professional UI**: Gradient header, clean typography
 -  **Hover Tooltips**: Country name khi hover flag
 -  **No Layout Conflicts**: Không ảnh hưởng trang web
+
+####  4. Port Checker v1.0.0
+
+**Kiểm tra xem cổng có mở hay đóng trên địa chỉ IP hoặc tên miền**
+
+-  **Quick Port Buttons**: Các cổng phổ biến (HTTP, HTTPS, SSH, FTP, v.v.)
+-  **Custom Port Input**: Kiểm tra bất kỳ cổng nào (1-65535)
+-  **Multiple Methods**: Kiểm tra dựa trên WebSocket, HTTP và API
+-  **Real-time Results**: Phản hồi nhanh với trạng thái chi tiết
+-  **Service Detection**: Xác định các dịch vụ phổ biến trên các cổng
+-  **Response Time**: Hiển thị tốc độ kết nối và phương pháp đã sử dụng
+-  **History Tracking**: Lưu giữ 5 kết quả kiểm tra cổng gần nhất
 
 ###  Cài đặt và Sử dụng
 
